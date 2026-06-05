@@ -1,1307 +1,2565 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1인 창업가 케이스 스터디 분석 대시보드</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons (for beautiful icons) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Pretendard', sans-serif;
-        }
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1인 창업가 케이스 스터디 100 | Welaunch News</title>
+  <meta name="description" content="전 세계 성공적인 1인 비즈니스(Solopreneur) 97개 실제 케이스 심층 분석 대시보드">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'><rect width=\'32\' height=\'32\' rx=\'8\' fill=\'%234f46e5\'/><polyline points=\'5,24 11,14 17,18 23,8 27,8\' stroke=\'white\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\' fill=\'none\'/></svg>">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <!-- Pretendard 한국어 폰트 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+  <!-- Tailwind Play CDN — 모든 유틸리티 클래스 포함 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.394.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *, body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+    html { scroll-behavior: smooth; }
+    @keyframes ping { 75%,100% { transform:scale(2); opacity:0 } }
+    .animate-ping { animation: ping 1s cubic-bezier(0,0,0.2,1) infinite; }
+    .nav-link { transition: border-color .2s, color .2s; }
+    .card-hover { transition: transform .2s, box-shadow .2s; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.08); }
+    .insight-card { transition: transform .25s, background-color .25s; }
+    .insight-card:hover { transform: scale(1.02); }
+    .modal-enter { animation: fadeIn .2s ease-out; }
+    @keyframes fadeIn { from { opacity:0; transform:scale(.97) } to { opacity:1; transform:scale(1) } }
+    .badge-industry { display:inline-flex; align-items:center; padding:.15rem .6rem; border-radius:9999px; font-size:.7rem; font-weight:600; border:1px solid; }
+    .industry-Software    { background:#ede9fe; color:#6d28d9; border-color:#ddd6fe; }
+    .industry-Media       { background:#fef3c7; color:#92400e; border-color:#fde68a; }
+    .industry-E-commerce  { background:#d1fae5; color:#065f46; border-color:#a7f3d0; }
+    .industry-Education   { background:#dbeafe; color:#1e40af; border-color:#bfdbfe; }
+    .industry-Coaching    { background:#fce7f3; color:#9d174d; border-color:#fbcfe8; }
+    .industry-Community   { background:#e0f2fe; color:#075985; border-color:#bae6fd; }
+    .industry-Marketing   { background:#f3e8ff; color:#6b21a8; border-color:#e9d5ff; }
+    .btn-detail { display:inline-flex; align-items:center; gap:.25rem; font-size:.72rem; font-weight:600; padding:.35rem .75rem; border-radius:.5rem; background:#eef2ff; color:#4338ca; transition:background .15s, color .15s; }
+    .btn-detail:hover { background:#4338ca; color:#fff; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width: 768px) {
+      .hide-mobile { display: none !important; }
+      .mobile-full { width: 100% !important; }
+    }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center gap-2">
-                        <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                            <i data-lucide="trending-up" class="w-6 h-6"></i>
-                        </div>
-                        <span class="font-bold text-xl tracking-tight text-slate-900">Solopreneur <span class="text-indigo-600">100</span></span>
-                    </div>
-                    <div class="hidden md:ml-8 md:flex md:space-x-8">
-                        <a href="#dashboard" class="nav-link border-indigo-500 text-slate-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-200">핵심 성과 지표</a>
-                        <a href="#charts" class="nav-link border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-200">데이터 시각화</a>
-                        <a href="#insights" class="nav-link border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-200">성공 패턴 분석</a>
-                        <a href="#database" class="nav-link border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-200">케이스 데이터베이스</a>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                        <span class="w-1.5 h-1.5 mr-1.5 bg-indigo-500 rounded-full animate-ping"></span>
-                        Welaunch News
-                    </span>
-                </div>
-            </div>
+<!-- ── Navigation ── -->
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <div class="bg-indigo-600 p-2 rounded-lg text-white">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
+          <span class="font-extrabold text-lg tracking-tight text-slate-900">Solopreneur <span class="text-indigo-600">100</span></span>
         </div>
-    </nav>
-
-    <!-- Header Section -->
-    <header class="bg-white border-b border-slate-200 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-2xl font-bold leading-7 text-slate-900 sm:text-3xl sm:truncate">
-                        1인 창업가 비즈니스 케이스 스터디 심층 분석
-                    </h1>
-                    <p class="mt-1 text-sm text-slate-500">
-                        Welaunch News : 전 세계 성공적인 1인 비즈니스(Solopreneur) 데이터 분석을 통한 성장 모델 및 핵심 분석
-                    </p>
-                </div>
-            </div>
+        <div class="hidden md:flex md:space-x-1">
+          <a href="#dashboard" class="nav-link px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700">핵심 성과 지표</a>
+          <a href="#charts"    class="nav-link px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50 hover:text-indigo-700">데이터 시각화</a>
+          <a href="#insights"  class="nav-link px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50 hover:text-indigo-700">성공 패턴 분석</a>
+          <a href="#database"  class="nav-link px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50 hover:text-indigo-700">케이스 데이터베이스</a>
         </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-
-        <!-- 1. KPI Summary Cards (Dashboard) -->
-        <section id="dashboard" class="scroll-mt-20">
-            <h2 class="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
-                <i data-lucide="activity" class="text-indigo-600"></i> 핵심 성과 및 지표 요약
-            </h2>
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                <!-- Card 1 -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 truncate">총 분석 케이스</p>
-                            <p class="mt-1 text-3xl font-bold text-slate-900" id="stat-total-cases">100 개</p>
-                        </div>
-                        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-xs text-slate-400 font-medium">글로벌 1인 창업 및 인디 비즈니스</span>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 truncate">최고 연 매출 케이스</p>
-                            <p class="mt-1 text-3xl font-bold text-emerald-600" id="stat-max-revenue">$300M</p>
-                        </div>
-                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                            <i data-lucide="dollar-sign" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-xs text-slate-500 font-medium" id="stat-max-owner">Stardew Valley (Eric Barone)</span>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 truncate">평균 연 매출액</p>
-                            <p class="mt-1 text-3xl font-bold text-slate-900" id="stat-avg-revenue">$4.52M</p>
-                        </div>
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-xs text-slate-400 font-medium">초고성능 인디 게임/플랫폼 아웃라이어 포함</span>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-slate-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500 truncate">가장 지배적인 산업군</p>
-                            <p class="mt-1 text-3xl font-bold text-violet-600" id="stat-top-industry">SaaS / 테크</p>
-                        </div>
-                        <div class="p-3 bg-violet-50 text-violet-600 rounded-lg">
-                            <i data-lucide="cpu" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-xs text-slate-400 font-medium" id="stat-top-industry-ratio">전체 케이스의 약 42% 점유</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Visual Charts Section -->
-        <section id="charts" class="scroll-mt-20">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                    <i data-lucide="pie-chart" class="text-indigo-600"></i> 통계 및 시각화 데이터
-                </h2>
-                <span class="text-xs text-slate-500">인터랙티브 차트를 통해 데이터의 패턴을 확인하세요.</span>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Chart 1: Industry Distribution (Pie/Doughnut) -->
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">산업 분야별 분포</h3>
-                        <p class="text-xs text-slate-400 mb-4">어떤 카테고리의 1인 창업이 가장 많을까요?</p>
-                    </div>
-                    <div class="relative w-full h-64 flex items-center justify-center">
-                        <canvas id="industryChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Chart 2: Revenue Distribution (Bar) -->
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">연 매출 규모별 빈도수</h3>
-                        <p class="text-xs text-slate-400 mb-4">대다수 1인 창업자의 현실적인 연간 수입 구간</p>
-                    </div>
-                    <div class="relative w-full h-64">
-                        <canvas id="revenueRangeChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Chart 3: Top Countries (Horizontal Bar) -->
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">주요 창업가 배출 국가</h3>
-                        <p class="text-xs text-slate-400 mb-4">글로벌 솔로프리너 활성화 국가 랭킹</p>
-                    </div>
-                    <div class="relative w-full h-64">
-                        <canvas id="countryChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. Success Patterns Insight Analysis -->
-        <section id="insights" class="scroll-mt-20 bg-gradient-to-tr from-slate-900 to-indigo-950 text-white p-8 rounded-2xl shadow-md relative overflow-hidden">
-            <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-indigo-500 opacity-20 rounded-full blur-3xl"></div>
-            <div class="absolute -left-16 -top-16 w-64 h-64 bg-teal-500 opacity-10 rounded-full blur-3xl"></div>
-            
-            <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="bg-indigo-500 text-white text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">Insight Report</span>
-                    <h2 class="text-xl font-bold">1인 창업 성공 공식 분석</h2>
-                </div>
-                <p class="text-slate-300 text-sm max-w-3xl mb-8">
-                    100여 개의 성공적인 글로벌 솔로프리너 사례에서 공통적으로 도출된 성공 트렌드 및 전략적 공통 분모입니다. 각 카드의 '분석 보기' 버튼을 클릭하면 세분화된 심층 리포트 팝업창을 불러옵니다.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Point 1 -->
-                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/10 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:bg-white/15">
-                        <div>
-                            <div class="w-10 h-10 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400 mb-4">
-                                <i data-lucide="megaphone" class="w-5 h-5"></i>
-                            </div>
-                            <h4 class="font-bold text-base text-white mb-2">초기 오디언스 기반 빌딩</h4>
-                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                                스타듀 밸리(Eric Barone), 디자인조이(Brett Williams) 등 대다수 상위 창업가들은 <strong>제품 출시 전 커뮤니티(Reddit, Twitter)나 빌드인퍼블릭(Build in Public)</strong> 방식을 통해 사전 오디언스를 확보했습니다. 마케팅 비용을 최소화하는 핵심 키입니다.
-                            </p>
-                        </div>
-                        <button onclick="openInsightModal(1)" class="mt-4 w-full py-2 px-3 bg-white/15 hover:bg-teal-500 hover:text-slate-950 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
-                            <span>분석 보기</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-
-                    <!-- Point 2 -->
-                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/10 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:bg-white/15">
-                        <div>
-                            <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4">
-                                <i data-lucide="hammer" class="w-5 h-5"></i>
-                            </div>
-                            <h4 class="font-bold text-base text-white mb-2">노코드 및 간결한 테크 스택</h4>
-                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                                Webflow, Bubble, Carrd, Notion 및 Shopify 등 노코드/로우코드 기술의 발전으로 기술 전문 장벽이 낮아졌습니다. 복잡한 개발 인프라 없이 빠르게 MVP를 출시하고 즉시 수익을 창출하는 것이 공통점입니다.
-                            </p>
-                        </div>
-                        <button onclick="openInsightModal(2)" class="mt-4 w-full py-2 px-3 bg-white/15 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
-                            <span>분석 보기</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-
-                    <!-- Point 3 -->
-                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/10 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:bg-white/15">
-                        <div>
-                            <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
-                                <i data-lucide="repeat" class="w-5 h-5"></i>
-                            </div>
-                            <h4 class="font-bold text-base text-white mb-2">구독형 및 제품화된 서비스</h4>
-                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                                일반적인 외주 용역 방식에서 벗어나 <strong>'제품화된 서비스(Productized Service)'</strong> 혹은 SaaS 형태를 차용했습니다. 고정 요금제를 도입하여 인력 추가 없이 확장(Scaling) 가능한 안정적 현금 흐름을 구축했습니다.
-                            </p>
-                        </div>
-                        <button onclick="openInsightModal(3)" class="mt-4 w-full py-2 px-3 bg-white/15 hover:bg-amber-500 hover:text-slate-950 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
-                            <span>분석 보기</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. Interactive Database Table Section -->
-        <section id="database" class="scroll-mt-20">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <!-- Control Panel -->
-                <div class="p-6 border-b border-slate-200 space-y-4">
-                    <div class="md:flex md:items-center md:justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-900">1인 비즈니스 케이스 데이터베이스</h3>
-                            <p class="text-xs text-slate-500">필터 및 검색 기능을 사용하여 다양한 1인 창업 사례의 세부 전략을 분석하세요.</p>
-                        </div>
-                        <!-- Quick Stats inside DB -->
-                        <div class="mt-4 md:mt-0 flex gap-2">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800" id="filter-count">
-                                100개 중 100개 표시 중
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Filters Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <!-- Search Input -->
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="search" class="h-4 w-4 text-slate-400"></i>
-                            </div>
-                            <input type="text" id="search-input" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm placeholder-slate-400" placeholder="창업자, 제품, 키워드 검색...">
-                        </div>
-
-                        <!-- Industry Filter -->
-                        <div>
-                            <select id="filter-industry" class="block w-full py-2 px-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
-                                <option value="">모든 산업군</option>
-                            </select>
-                        </div>
-
-                        <!-- Country Filter -->
-                        <div>
-                            <select id="filter-country" class="block w-full py-2 px-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
-                                <option value="">모든 국가</option>
-                            </select>
-                        </div>
-
-                        <!-- Revenue Sort -->
-                        <div>
-                            <select id="sort-revenue" class="block w-full py-2 px-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white">
-                                <option value="">정렬 방식 (연 매출 순)</option>
-                                <option value="high">연 매출 높은 순</option>
-                                <option value="low">연 매출 낮은 순</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Table View -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">창업가 / 비즈니스</th>
-                                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">산업 분야</th>
-                                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">국가 / 연도</th>
-                                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">연 매출 ($)</th>
-                                <th scope="col" class="px-6 py-3.5 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">상세 분석</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-slate-200" id="data-table-body">
-                            <!-- JS will inject rows here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Empty State -->
-                <div id="empty-state" class="hidden p-12 text-center">
-                    <div class="mx-auto w-12 h-12 text-slate-400">
-                        <i data-lucide="frown" class="w-12 h-12"></i>
-                    </div>
-                    <h3 class="mt-2 text-sm font-semibold text-slate-900">결과를 찾을 수 없습니다</h3>
-                    <p class="mt-1 text-xs text-slate-500">다른 키워드나 필터를 선택해 보십시오.</p>
-                </div>
-
-                <!-- Table Pagination/Footer -->
-                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-                    <div class="flex-1 flex justify-between sm:hidden">
-                        <button id="prev-page-mobile" class="relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-5">이전</button>
-                        <button id="next-page-mobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-5">다음</button>
-                    </div>
-                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                        <div>
-                            <p class="text-xs text-slate-500">
-                                현재 <span class="font-medium" id="page-start">1</span> 에서 <span class="font-medium" id="page-end">10</span> 건의 데이터 표시 중 (총 <span class="font-medium" id="page-total">100</span>건)
-                            </p>
-                        </div>
-                        <div>
-                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination" id="pagination-nav">
-                                <!-- Pagination links created dynamically -->
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Case Interactive Details Drawer / Modal -->
-    <div id="details-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div class="fixed inset-0 bg-slate-900/60 transition-opacity backdrop-blur-sm" aria-hidden="true" id="modal-close-bg"></div>
-
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-slate-100">
-                <!-- Modal header -->
-                <div class="bg-indigo-900 px-6 py-6 text-white relative">
-                    <button type="button" class="absolute top-4 right-4 text-white/80 hover:text-white focus:outline-none" id="modal-close-btn">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                    <div class="flex items-center gap-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-400 text-slate-900" id="modal-industry">
-                            SaaS
-                        </span>
-                        <span class="text-sm opacity-80 flex items-center gap-1">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="modal-country">USA</span>
-                        </span>
-                        <span class="text-sm opacity-80 flex items-center gap-1">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> <span id="modal-year">2019</span>
-                        </span>
-                    </div>
-                    <h3 class="text-2xl font-bold mt-2" id="modal-business-name">Business Name</h3>
-                    <p class="text-indigo-200 text-sm mt-1" id="modal-description">Short description goes here...</p>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="bg-white px-6 py-6 space-y-6">
-                    <!-- Key Stats inside Modal -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">창업가</span>
-                            <span class="font-semibold text-slate-800 text-sm" id="modal-creator">Jane Doe</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">연 매출액</span>
-                            <span class="font-bold text-emerald-600 text-sm" id="modal-revenue">$1,200,000</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">초기 투자금</span>
-                            <span class="font-semibold text-slate-800 text-sm" id="modal-investment">N/A</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">제품 단가</span>
-                            <span class="font-semibold text-slate-800 text-sm truncate block" id="modal-price">Free</span>
-                        </div>
-                    </div>
-
-                    <!-- Detail Section Blocks with customized prominent typography -->
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-indigo-500 pl-4">
-                            <h4 class="font-bold text-slate-900 text-lg flex items-center gap-1.5">
-                                <i data-lucide="lightbulb" class="w-5 h-5 text-indigo-500"></i> 아이디어를 발견하게 된 계기
-                            </h4>
-                            <p class="text-base text-slate-700 mt-2.5 leading-relaxed" id="modal-trigger">
-                                아이디어 발굴 히스토리가 출력됩니다.
-                            </p>
-                        </div>
-
-                        <div class="border-l-4 border-teal-500 pl-4">
-                            <h4 class="font-bold text-slate-900 text-lg flex items-center gap-1.5">
-                                <i data-lucide="users-round" class="w-5 h-5 text-teal-500"></i> 주요 고객 유입 및 마케팅 채널
-                            </h4>
-                            <p class="text-base text-slate-700 mt-2.5 leading-relaxed" id="modal-marketing">
-                                마케팅 채널 및 방법이 출력됩니다.
-                            </p>
-                        </div>
-
-                        <div class="border-l-4 border-amber-500 pl-4" id="modal-tools-container">
-                            <h4 class="font-bold text-slate-900 text-lg flex items-center gap-1.5">
-                                <i data-lucide="wrench" class="w-5 h-5 text-amber-500"></i> 활용 도구 및 기술 스택
-                            </h4>
-                            <p class="text-base text-slate-700 mt-2.5 leading-relaxed" id="modal-tools">
-                                Notion, Webflow 등 구축 툴 목록이 들어갑니다.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="bg-slate-50 px-6 py-4 flex justify-between items-center border-t border-slate-100">
-                    <a href="#" target="_blank" id="modal-website-btn" class="inline-flex items-center gap-1 text-xs text-indigo-600 font-semibold hover:text-indigo-800">
-                        <i data-lucide="external-link" class="w-4 h-4"></i> 공식 웹사이트 방문하기
-                    </a>
-                    <button type="button" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-semibold rounded-lg" id="modal-close-footer-btn">
-                        닫기
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          <span class="w-1.5 h-1.5 mr-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+          Welaunch News
+        </span>
+        <!-- Mobile menu btn -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
     </div>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1">
+    <a href="#dashboard" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-indigo-50">핵심 성과 지표</a>
+    <a href="#charts"    class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50">데이터 시각화</a>
+    <a href="#insights"  class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50">성공 패턴 분석</a>
+    <a href="#database"  class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-indigo-50">케이스 데이터베이스</a>
+  </div>
+</nav>
 
-    <!-- Success Patterns Insight Analysis Pop-up Modal -->
-    <div id="insight-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay with blur -->
-            <div class="fixed inset-0 bg-slate-950/70 transition-opacity backdrop-blur-sm animate-fade-in" aria-hidden="true" id="insight-modal-close-bg"></div>
-
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100">
-                <!-- Modal header -->
-                <div class="bg-indigo-950 px-6 py-6 text-white relative">
-                    <button type="button" class="absolute top-4 right-4 text-white/80 hover:text-white focus:outline-none" id="insight-modal-close-btn">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-400 text-slate-900" id="insight-modal-tag">
-                        INSIGHT REPORT
-                    </span>
-                    <h3 class="text-xl sm:text-2xl font-bold mt-2" id="insight-modal-title">성공 공식 심층 분석</h3>
-                </div>
-
-                <!-- Modal Body with Rich Strategy Text -->
-                <div class="bg-white px-6 py-6 space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed" id="insight-modal-body">
-                    <!-- Text injected via JS -->
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="bg-slate-50 px-6 py-4 flex justify-end border-t border-slate-100">
-                    <button type="button" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors" id="insight-modal-close-footer-btn">
-                        인사이트 확인 완료
-                    </button>
-                </div>
-            </div>
-        </div>
+<!-- ── Page Header ── -->
+<header class="bg-white border-b border-slate-100 py-7">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+          1인 창업가 비즈니스 케이스 스터디 심층 분석
+        </h1>
+        <p class="mt-1.5 text-sm text-slate-500">
+          Welaunch News · 전 세계 성공적인 1인 비즈니스(Solopreneur) 데이터 분석을 통한 성장 모델 및 핵심 분석
+        </p>
+      </div>
+      <div class="flex-shrink-0">
+        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+          <i data-lucide="database" class="w-3.5 h-3.5 mr-1.5"></i>
+          실제 데이터 기반
+        </span>
+      </div>
     </div>
+  </div>
+</header>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-20">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-slate-500 text-xs">
-            <p>© 2026 Solopreneur 100 Case Analysis Dashboard. Created with interactivity.</p>
-            <p class="mt-1">인디 창업가들의 다양한 케이스를 발굴하여 동기를 부여하는 대시보드 리포트입니다.</p>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
+
+  <!-- ── Section 1: KPI Cards ── -->
+  <section id="dashboard" class="scroll-mt-20">
+    <div class="flex items-center gap-2 mb-5">
+      <i data-lucide="activity" class="w-5 h-5 text-indigo-600"></i>
+      <h2 class="text-lg font-bold text-slate-900">핵심 성과 및 지표 요약</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+      <div class="card-hover bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">총 분석 케이스</p>
+            <p class="mt-2 text-4xl font-extrabold text-slate-900" id="kpi-total">97 개</p>
+          </div>
+          <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><i data-lucide="users" class="w-6 h-6"></i></div>
         </div>
-    </footer>
+        <p class="mt-3 text-xs text-slate-400">글로벌 1인 창업 및 인디 비즈니스</p>
+      </div>
 
-    <!-- Embedded Cleaned Database and Interactivity Script -->
-    <script>
-        // 1. Raw Dataset Parsed & Structured (Normalized for UI processing)
-        const rawCaseData = [
-            {
-                founder: "Eric Barone",
-                business: "Stardew Valley",
-                url: "stardewvalley.net",
-                desc: "모바일 및 PC 비디오 게임",
-                industry: "Game/Media",
-                product: "Stardew Valley Game",
-                price: "iOS: $4.99, Steam: $13.99",
-                revenue: 300000000,
-                investment: "N/A",
-                trigger: "2011년, 취업 경쟁력을 높이고 개인 포트폴리오를 만들기 위해 인디 게임 스타듀 밸리의 1인 자체 개발 작업을 시작했습니다.",
-                marketing: "Reddit, Twitter 및 자체 개발 블로그를 개설하여 매 주 진행 상황을 유저들과 공유했습니다. 두터운 팬층을 형성한 뒤 퍼블리셔와의 파트너십을 통해 기하급수적으로 마케팅 볼륨을 높였습니다.",
-                tools: "C#, XNA Framework, Custom Engine",
-                country: "USA",
-                year: "2011"
-            },
-            {
-                founder: "Gary Brewer",
-                business: "BuiltWith",
-                url: "builtwith.com",
-                desc: "웹사이트 구축 기술 추적 및 정보 프로파일링 도구",
-                industry: "SaaS",
-                product: "Premium DB API Access",
-                price: "$295 / Month 부터 시작",
-                revenue: 14000000,
-                investment: "N/A",
-                trigger: "웹사이트가 어떤 기술 스택(프레임워크, 분석 도구)을 쓰는지 한눈에 보고 싶다는 본인의 순수한 기술적 호기심에서 개발을 착수했습니다.",
-                marketing: "초기 검색 엔진 최적화(SEO)와 경쟁사 기술을 검색하는 사람들을 타겟팅했습니다. 특수 기술 검색에 우위를 점하며 테크 전문 바이어들 사이에 입소문이 퍼져 대형 기업들과 제휴를 시작했습니다.",
-                tools: ".NET, C#, MS-SQL, jQuery",
-                country: "Australia",
-                year: "2007"
-            },
-            {
-                founder: "Brett Williams",
-                business: "Designjoy",
-                url: "designjoy.co",
-                desc: "무제한 디자인 구독 서비스 (제품화된 서비스)",
-                industry: "Service",
-                product: "Design Subscription",
-                price: "$4,995 / Month",
-                revenue: 1500000,
-                investment: "$0",
-                trigger: "기존의 시간 조율이 오래 걸리는 외주 에이전시의 번거로움에 지쳐, 넷플릭스처럼 정기구독하면 무제한으로 디자인을 빠르게 받아볼 수 있는 방식을 설계했습니다.",
-                marketing: "초기에 Product Hunt 출시 1위를 달성하고, Twitter에서 제작 과정을 공개하며(Build in Public) 디자인 퀄리티와 연 수입을 투명하게 공개해 폭발적인 트러스트를 얻었습니다.",
-                tools: "Webflow, Trello, Figma, Stripe",
-                country: "USA",
-                year: "2017"
-            },
-            {
-                founder: "Ahmad",
-                business: "Bidet King",
-                url: "bidetking.com",
-                desc: "스마트 비데 전문 유통 및 커머스",
-                industry: "E-commerce",
-                product: "Smart Bidet Seats",
-                price: "$200 - $1,000+",
-                revenue: 10000000,
-                investment: "$5,000",
-                trigger: "미국인들이 비데를 상대적으로 적게 쓴다는 사실을 발견하고, 위생 건강 분야의 미개척지 시장성을 포착하여 프리미엄 비데 공급 쇼핑몰을 구상했습니다.",
-                marketing: "가장 전환율이 높았던 페이스북 정밀 타겟팅 광고를 집행했으며, Kijiji/eBay 등의 마켓플레이스 리스팅 및 비데 활용법/장점에 대한 블로그 SEO를 끈질기게 수행하여 매출을 성장시켰습니다.",
-                tools: "Shopify, Scout, Google Merchant",
-                country: "Canada",
-                year: "2015"
-            },
-            {
-                founder: "Mike Lecky",
-                business: "Vagabond Heart",
-                url: "vagabondheart.co",
-                desc: "빈티지 풍의 독특한 여행 캐리어용 패치 및 액세서리",
-                industry: "E-commerce",
-                product: "Travel Patches",
-                price: "$9 부터 시작",
-                revenue: 120000,
-                investment: "$1,000 - $5,000",
-                trigger: "본인의 빈티지 의류 스타일 및 영화, 여행에 대한 깊은 취향이 반영된 유니크한 가방 디자인 패치가 시장에 없다는 생각으로 소량 제작을 시작했습니다.",
-                marketing: "Fulfillment by Amazon(FBA)을 활용하여 수월하게 물류망을 다졌고, 3개월 만에 월 주문이 엄청나게 뛰는 효과를 얻었습니다. 또한 오픈율 30%를 지닌 탄탄한 뉴스레터 메일링 리스트 마케팅이 주요 성공 요인입니다.",
-                tools: "Shopify, Amazon FBA, Mailchimp",
-                country: "Canada",
-                year: "2015"
-            },
-            {
-                founder: "Pieter Levels",
-                business: "Photo AI",
-                url: "photoai.com",
-                desc: "AI 기반 가상 포토스튜디오 및 프로필 생성",
-                industry: "SaaS/AI",
-                product: "AI Photo Generation Pack",
-                price: "$29 - $99 / Month",
-                revenue: 950000,
-                investment: "$1,000",
-                trigger: "디지털 노마드로 여행하면서 사진가가 직접 촬영을 나가는 번거로움과 비용 없이 AI 합성 기술만으로 고품격 가상 스튜디오 촬영을 해주는 시장을 타겟팅했습니다.",
-                marketing: "자신의 활발한 Twitter 계정(10만 명 이상)에 개발 과정을 실시간으로 업데이트하는 Build in Public 방식으로 글로벌 이목을 끌며 바이럴에 완벽하게 성공했습니다.",
-                tools: "PHP, SQLite, Stable Diffusion API",
-                country: "Netherlands",
-                year: "2022"
-            },
-            {
-                founder: "Andrey Azimov",
-                business: "Sheet2Site",
-                url: "sheet2site.com",
-                desc: "구글 시트를 활용해 몇 분 만에 웹사이트로 빌드해 주는 서비스",
-                industry: "No-Code",
-                product: "SaaS License Subscription",
-                price: "$29 / Month",
-                revenue: 120000,
-                investment: "$0",
-                trigger: "프로그래밍 없이 단순히 구글 시트에 행과 열만 입력하면 코딩을 몰라도 완벽히 작동하는 예쁜 웹사이트를 제작하고픈 사람들을 위해 개발되었습니다.",
-                marketing: "Product Hunt에 해당 아이디어를 런칭하여 '오늘의 제품(Product of the Day)'에 선정되며 엄청난 가입 트래픽을 얻었습니다.",
-                tools: "Google Sheets API, Vanilla JS, Heroku",
-                country: "Ukraine",
-                year: "2018"
-            },
-            {
-                founder: "Marc Lou",
-                business: "ShipFast",
-                url: "opennuma.com",
-                desc: "개발자들을 위한 NextJS 기반 보일러플레이트 템플릿 패키지",
-                industry: "SaaS",
-                product: "ShipFast Boilerplate Code",
-                price: "$169 - $249 One-time",
-                revenue: 520000,
-                investment: "$0",
-                trigger: "수많은 마이크로 인디 창업을 기획할 때마다 결제, DB 연동, 인증을 처음부터 구축해야 하는 불필요한 공수를 완전히 줄여주고자 자신의 스타터 키트를 템플릿으로 상품화했습니다.",
-                marketing: "Twitter와 YouTube에서 거침없고 유쾌한 인디 개발 라이프 비디오를 연달아 업로드하고 솔직한 누적 매출 통계를 대중에게 공개해 탄탄한 인플루언스 기반 마케팅을 전개했습니다.",
-                tools: "Next.js, Tailwind CSS, Stripe, MongoDB",
-                country: "France",
-                year: "2023"
-            },
-            {
-                founder: "Tony Dinh",
-                business: "TypingMind",
-                url: "typingmind.com",
-                desc: "UX가 개선된 반응형 독립형 ChatGPT 웹 인터페이스 프론트엔드",
-                industry: "SaaS/AI",
-                product: "TypingMind App License",
-                price: "$39 - $129 One-time",
-                revenue: 410000,
-                investment: "$0",
-                trigger: "OpenAI가 제공하는 오리지널 ChatGPT 웹 인터페이스가 반응이 느리고, 메시지 검색이 되지 않으며, 채팅 히스토리 관리가 불편하다는 개인적 불만사항을 개선하고자 개발했습니다.",
-                marketing: "제품 개발 시작 1일 차부터 Twitter에 'AI 인터페이스 개발 도전기'를 올리며 일주일 만에 완성도 높은 프로토타입을 공개했고, 순식간에 수만 명의 인디 개발자들이 호응하여 첫날부터 매출이 폭발했습니다.",
-                tools: "Next.js, Tailwind CSS, Vercel, OpenAI API",
-                country: "Vietnam",
-                year: "2023"
-            },
-            {
-                founder: "Jon Yongfook",
-                business: "Bannerbear",
-                url: "bannerbear.com",
-                desc: "API를 통한 마케팅 이미지 및 비디오 자동 생성 자동화 도구",
-                industry: "SaaS",
-                product: "API Subscription Plans",
-                price: "$49 - $299 / Month",
-                revenue: 450000,
-                investment: "$0",
-                trigger: "여러 개의 스타트업을 시도하던 중, 매번 마케팅 이미지 배너를 손수 일러스트나 포토샵으로 뽑아내는 것이 소모적임을 깨닫고 API로 이미지를 찍어내는 도구를 개발했습니다.",
-                marketing: "12개월 동안 매월 1개의 스타트업을 런칭하는 '12 startups in 12 months' 챌린지를 이어나가며 인디 씬의 지지를 모았고, 그 중 큰 호응을 얻은 배너베어에 완전히 집중하여 성공을 견인했습니다.",
-                tools: "Ruby on Rails, Heroku, AWS",
-                country: "Singapore",
-                year: "2019"
-            },
-            {
-                founder: "Damon Chen",
-                business: "Testimonial.to",
-                url: "testimonial.to",
-                desc: "쉽게 텍스트/비디오 고객 후기를 수집하고 삽입하는 위젯",
-                industry: "SaaS",
-                product: "Premium Widget Embed",
-                price: "$25 - $79 / Month",
-                revenue: 380000,
-                investment: "$1,500",
-                trigger: "온라인 쇼핑몰이나 SaaS를 빌딩하는 사람들이 고객 후기(Social Proof)를 비디오나 텍스트로 쉽게 취합하고 랜딩페이지에 띄울 방법이 수동적이라 직접 연동 시스템을 구상했습니다.",
-                marketing: "트위터 파워 인플루언서들이 가득한 빌드인퍼블릭 네트워크에 타겟팅하여 주요 유명 인플루언서들이 직접 사용하고 후기를 적게 하여 입소문 마케팅의 정수를 보여주었습니다.",
-                tools: "Next.js, Node.js, MongoDB",
-                country: "USA",
-                year: "2020"
-            },
-            {
-                founder: "Justin Welch",
-                business: "JustinWelch.me",
-                url: "justinwelch.me",
-                desc: "개인 브랜드 구축 및 크리에이터 비즈니스 교육 강의 코스",
-                industry: "Infopreneur",
-                product: "Online Course (LinkedIn/Twitter OS)",
-                price: "$150 Per Course",
-                revenue: 1800000,
-                investment: "$150",
-                trigger: "기업의 고위 임원으로 과로와 번아웃을 겪은 후, 1인 솔로 크리에이터로서 고액의 고정비용 없이도 본인의 지식을 지적 자산으로 수익화할 수 있는 구조를 증명하려 시작했습니다.",
-                marketing: "LinkedIn과 Twitter에 매일 2개씩 독보적 퀄리티의 비즈니스 팁 글을 유기적으로 게재해 오디언스를 50만 명 이상 모으고 이를 통해 수집한 메일링 리스트 구독자에게 코스를 제안하는 구조를 구축했습니다.",
-                tools: "Kajabi, ConvertKit, Carrd",
-                country: "USA",
-                year: "2019"
-            },
-            {
-                founder: "Pat Walls",
-                business: "Starter Story",
-                url: "starterstory.com",
-                desc: "수천 명의 전 세계 창업자들의 비즈니스 인터뷰 미디어 플랫폼",
-                industry: "Media",
-                product: "Premium Club Membership",
-                price: "$149 / Year",
-                revenue: 1200000,
-                investment: "$0",
-                trigger: "스스로가 다양한 비즈니스 아이디어를 찾고 있었으나, 진짜 실존하는 창업가들이 정확히 얼마의 투자를 해서 어떻게 초반 첫 고객을 모았는지 구체적인 진짜 정보가 없어 아쉬워 만들었습니다.",
-                marketing: "초기 100건 이상의 인터뷰를 집요한 콜드메일을 통해 무료로 수집해 발행하였으며, 엄청나게 디테일한 텍스트 콘텐츠의 장점을 이용해 고성능 Google SEO 유입 경로를 안착시켰습니다.",
-                tools: "Ruby on Rails, Netlify, Custom CMS",
-                country: "USA",
-                year: "2017"
-            },
-            {
-                founder: "Gabor Cselle",
-                business: "Area 120 (Various)",
-                url: "gaborcselle.com",
-                desc: "마이크로 프로덕트 테스터 및 시리얼 빌더",
-                industry: "Tech",
-                product: "Micro Tools & Consulting",
-                price: "Custom",
-                revenue: 550000,
-                investment: "N/A",
-                trigger: "전 구글 임원 출신으로서 기업 인큐베이션 및 신속한 린 스타트업 실행력을 검증하기 위한 툴들을 기획했습니다.",
-                marketing: "글로벌 테크 미디어 피칭 및 자신의 트위터 계정을 통한 기민한 유저 피드백 기반 업데이트가 성장의 핵심입니다.",
-                tools: "No-code, Firebase, GCP",
-                country: "USA",
-                year: "2016"
-            },
-            {
-                founder: "Jakub Czakon",
-                business: "Neptune.ai",
-                url: "neptune.ai",
-                desc: "머신러닝 개발 데이터 및 모델 메타데이터 기록 추적 SaaS",
-                industry: "SaaS/AI",
-                product: "Team Subscription Plans",
-                price: "$49 - $499 / Month",
-                revenue: 2300000,
-                investment: "N/A",
-                trigger: "AI 연구진들이 복잡하게 실험 코드를 돌릴 때 결과 이력과 정합성 매칭이 꼬이는 고충을 겪는 것을 보고 깔끔한 대시보드 저장소 제작했습니다.",
-                marketing: "인바운드 콘텐츠 마케팅에 지독할 정도로 공을 들여 '머신러닝 실험 관리법' 등 공학자들의 기술적 오가닉 키워드를 완벽히 장악하는 검색 마케팅을 펼쳤습니다.",
-                tools: "Python, Kubernetes, React, AWS",
-                country: "Poland",
-                year: "2018"
-            }
-        ];
+      <div class="card-hover bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">최고 연 매출 케이스</p>
+            <p class="mt-2 text-4xl font-extrabold text-emerald-600" id="kpi-max-rev">$300M</p>
+          </div>
+          <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+        </div>
+        <p class="mt-3 text-xs text-slate-500 font-medium" id="kpi-max-name">Stardew Valley (Eric Barone)</p>
+      </div>
 
-        // 2. Generate Random/Mock cases to reach total 100 entries
-        const industries = ["SaaS", "E-commerce", "Media", "Service", "No-Code", "AI", "Infopreneur"];
-        const countries = ["USA", "Canada", "UK", "Germany", "France", "Singapore", "Australia", "Vietnam", "Japan", "South Korea"];
-        const years = ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"];
-        const creatorFirst = ["Alex", "John", "Sarah", "Emile", "Liam", "Yuki", "Minjun", "Chloe", "Dave", "Sophia", "Lucas", "Elena", "Marcus", "Oliver"];
-        const creatorLast = ["Miller", "Tan", "Smith", "Kim", "Nguyen", "Sato", "Dupont", "Johnson", "Davis", "Chen", "Lee", "Garcia", "Brown"];
-        const serviceSuffix = ["Flow", "Boost", "Page", "Scout", "Metrics", "Kit", "Automate", "Design", "Hub", "Lab", "Core", "Draft"];
-        
-        for (let i = rawCaseData.length + 1; i <= 100; i++) {
-            const selectedInd = industries[Math.floor(Math.random() * industries.length)];
-            const selectedCountry = countries[Math.floor(Math.random() * countries.length)];
-            const selectedYear = years[Math.floor(Math.random() * years.length)];
-            const creator = `${creatorFirst[Math.floor(Math.random() * creatorFirst.length)]} ${creatorLast[Math.floor(Math.random() * creatorLast.length)]}`;
-            const biz = `${creatorLast[Math.floor(Math.random() * creatorLast.length)]}${serviceSuffix[Math.floor(Math.random() * serviceSuffix.length)]}`;
-            const rev = Math.floor(Math.random() * 480000) + 20000;
-            
-            rawCaseData.push({
-                founder: creator,
-                business: biz,
-                url: `${biz.toLowerCase()}.io`,
-                desc: `${selectedInd} 기술을 활용한 현대인을 위한 솔루션`,
-                industry: selectedInd,
-                product: "Premium Access License",
-                price: `$${Math.floor(Math.random() * 89) + 10} / Month`,
-                revenue: rev,
-                investment: Math.random() > 0.6 ? `$${Math.floor(Math.random() * 5000)}` : "$0",
-                trigger: `창업가 ${creator}는 기존 기업에서 수작업으로 발생하던 문제를 수없이 겪으며 자동화의 한계를 목격한 뒤, 이를 마이크로 솔루션으로 해결해 대중에게 배포하기 시작했습니다.`,
-                marketing: `Product Hunt에 제품을 적극 런칭하고, SNS에 실시간으로 빌딩 스토리를 공유하는 공용 빌드인퍼블릭 마케팅을 접목해 비용 없이 전환율을 극대화했습니다.`,
-                tools: "No-code Platforms, Stripe, Zapier, Webflow",
-                country: selectedCountry,
-                year: selectedYear
-            });
-        }
+      <div class="card-hover bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">평균 연 매출액</p>
+            <p class="mt-2 text-4xl font-extrabold text-slate-900" id="kpi-avg-rev">$3.54M</p>
+          </div>
+          <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i data-lucide="bar-chart-3" class="w-6 h-6"></i></div>
+        </div>
+        <p class="mt-3 text-xs text-slate-400">초고성능 케이스 아웃라이어 포함</p>
+      </div>
 
-        // 3. State Management
-        let filteredData = [...rawCaseData];
-        let currentPage = 1;
-        const itemsPerPage = 10;
+      <div class="card-hover bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">가장 지배적인 산업군</p>
+            <p class="mt-2 text-3xl font-extrabold text-violet-600" id="kpi-top-ind">E-commerce</p>
+          </div>
+          <div class="p-3 bg-violet-50 text-violet-600 rounded-xl"><i data-lucide="cpu" class="w-6 h-6"></i></div>
+        </div>
+        <p class="mt-3 text-xs text-slate-400" id="kpi-top-ind-ratio">전체 케이스의 약 30% 점유</p>
+      </div>
 
-        // Structured Strategic Reports (Each analysis is 650+ Characters)
-        const insightReports = {
-            1: {
-                title: "초기 오디언스 기반 빌딩 (Audience-First)",
-                tag: "마케팅 & 커뮤니티 전술",
-                content: `
-                    <p class="mb-4">스타듀 밸리의 개발자 에릭 바론이나 디자인조이의 브렛 윌리엄스 같은 글로벌 1인 창업가들의 공통된 성공 방정식 중 첫 번째는 바로 <strong>'오디언스 우선(Audience First)'</strong> 전략입니다. 이들은 완성된 완제품을 들고 무작정 시장의 문을 두드리는 무모한 도전을 하지 않습니다. 오히려 제품의 아주 초기 기획 단계부터 기능 정의, 디자인 시안, 개발 도중 발생하는 크고 작은 시행착오와 실패담 등 빌딩 과정 전체를 트위터, 레딧, 전용 뉴스레터 등에서 가감 없이 투명하게 공개하는 <strong>'빌드 인 퍼블릭(Build in Public)'</strong> 전술을 고수합니다.</p>
-                    <p class="mb-4">제품이 점진적으로 발전해 나가는 생생한 스토리를 지켜보는 잠재 고객들은 단순한 구매자가 아닌 제품의 핵심 지지자이자 강력한 감정적 팬덤으로 성장하게 됩니다. 이 과정에서 유기적으로 확보된 예비 충성 고객층은 정식 제품이 시장에 런칭되는 첫날 즉시 아무런 거부감 없이 유료 결제자로 전환되므로, 전통적인 마케팅 대행사나 막대한 광고 집행 예산 없이도 강력한 초기 시장 안착과 매출의 수직 상승을 달성할 수 있습니다.</p>
-                    <p>나아가 수많은 팬덤과의 즉각적인 피드백 루프는 1인 개발이라는 물리적 한계를 넘어 완벽한 제품-시장 적합성(PMF)을 정교하게 벼려내는 강력한 무기가 됩니다. 결국 1인 창업에서 오디언스를 먼저 구축한다는 것은 잠재적 고객 수요를 완벽히 예측하고 시작하는 리스크 통제 수단입니다.</p>
-                `
-            },
-            2: {
-                title: "노코드 및 경량 테크 스택 (No-Code Stack)",
-                tag: "기술 인프라 혁신",
-                content: `
-                    <p class="mb-4">오늘날 글로벌 1인 창업 및 인디 비즈니스 씬이 전례 없는 고수익과 급속한 확장을 구가할 수 있는 기술적 배경에는 바로 <strong>노코드(No-code)와 로우코드(Low-code) 기술 혁명</strong>이 든든하게 자리 잡고 있습니다. 웹플로우(Webflow), 버블(Bubble), 카르드(Carrd), 노션(Notion)과 같은 직관적인 시각적 빌더와 고도화된 전자상거래 인프라인 쇼피파이(Shopify), 그리고 유연한 페이먼트 게이트웨이인 스트라이프(Stripe), 시스템 간 유기적인 연동을 책임지는 자피어(Zapier) 등의 결합 덕분입니다.</p>
-                    <p class="mb-4">과거에는 수천만 원의 외주 비용과 수개월의 고된 개발 기간이 소요되었을 고품질의 서비스 아키처와 자동화 결제 및 고객 관리 시스템을, 이제는 1인 창업자 혼자서 단 몇 시간 내에 완벽하게 디자인하고 시장에 가동할 수 있습니다. 기술 개발의 장벽이 극적으로 낮아짐에 따라 창업가는 소모적인 소스코드 디버깅이나 복잡한 웹서버 인프라 유지 보수에 자신의 귀중한 에너지를 낭비하지 않게 되었습니다.</p>
-                    <p>대신 비즈니스의 절대적인 본질인 '고객 가치 제안의 정교화'와 '효율적인 타겟 고객 획득 마케팅(Growth)'에 자신들의 한정된 시간과 자원을 100% 집중할 수 있게 됩니다. 이는 최소한의 리스크로 시장 가치를 신속히 입증하고 가볍게 피벗(Pivot)할 수 있는 가공할 속도전의 원천입니다.</p>
-                `
-            },
-            3: {
-                title: "구독형 및 제품화된 서비스 (Productized Service)",
-                tag: "비즈니스 모델 다각화",
-                content: `
-                    <p class="mb-4">1인 기업가와 솔로프리너들이 직면하는 가장 파괴적인 제약인 '물리적인 개인 시간의 한계'를 완벽히 극복하고 매출 스케일업(Scaling)을 실현하는 유일한 열쇠는 바로 <strong>'무형 서비스의 제품화(Productized Service)'</strong> 및 <strong>'구독형 비즈니스 아키텍처'</strong>의 대담한 설계에 있습니다. 전통적인 프리랜서나 전문 에이전시의 용역 계약은 매 프로젝트마다 소모적인 제안서를 작성하고, 지난한 단가 조율과 협상을 벌이며, 결국 자신이 노동한 시간의 절대량에 비례해 정산받는 수렁에서 벗어날 수 없었습니다.</p>
-                    <p class="mb-4">반면 디자인조이와 같은 선구적 모델은 무형의 자산인 디자인 노동을 '월 4,995달러 무제한 디자인 제공'이라는 매우 명확하고 고정된 규격 상품으로 재정의했습니다. 이를 통해 클라이언트는 복잡한 업무 미팅이나 견적서 검토 절차 없이 마치 넷플릭스 영화를 무제한으로 구독하듯 카드를 긁어 즉각적으로 서비스를 소비합니다.</p>
-                    <p>창업가는 모든 서비스 업무 프로세스를 완벽히 매뉴얼화 및 템플릿화하여 운영 효율을 10배 이상 증폭시킵니다. 추가적인 인력 채용과 거대 에이전시 운영에 따른 막대한 관리 리스크를 원천 배제하면서도, 매달 안정적으로 반복 누적되는 고정 매출(MRR)의 예측 가능성을 확보하여 초소형 1인 비즈니스를 무한대로 확장할 수 있는 탄탄한 재무 구조가 탄생하게 됩니다.</p>
-                `
-            }
-        };
+    </div>
+  </section>
 
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initFilters();
-            renderDashboardStats();
-            renderCharts();
-            applyFilters();
-            initNavigation();
-            initInsightModal();
-        });
+  <!-- ── Section 2: Charts ── -->
+  <section id="charts" class="scroll-mt-20">
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2">
+        <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
+        <h2 class="text-lg font-bold text-slate-900">통계 및 시각화 데이터</h2>
+      </div>
+      <span class="text-xs text-slate-400 hidden sm:block">인터랙티브 차트로 데이터 패턴을 확인하세요</span>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        // Dynamic Filtering Population
-        function initFilters() {
-            const industryFilter = document.getElementById('filter-industry');
-            const countryFilter = document.getElementById('filter-country');
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col">
+        <h3 class="font-bold text-slate-800 text-sm mb-0.5">산업 분야별 분포</h3>
+        <p class="text-xs text-slate-400 mb-4">어떤 카테고리의 1인 창업이 가장 많을까요?</p>
+        <div class="flex-1 relative" style="min-height:230px">
+          <canvas id="chartIndustry"></canvas>
+        </div>
+      </div>
 
-            const uniqueIndustries = [...new Set(rawCaseData.map(item => item.industry))].sort();
-            const uniqueCountries = [...new Set(rawCaseData.map(item => item.country))].sort();
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col">
+        <h3 class="font-bold text-slate-800 text-sm mb-0.5">연 매출 규모별 빈도수</h3>
+        <p class="text-xs text-slate-400 mb-4">1인 창업자의 현실적인 연간 수입 구간</p>
+        <div class="flex-1 relative" style="min-height:230px">
+          <canvas id="chartRevenue"></canvas>
+        </div>
+      </div>
 
-            uniqueIndustries.forEach(ind => {
-                const opt = document.createElement('option');
-                opt.value = ind;
-                opt.textContent = ind;
-                industryFilter.appendChild(opt);
-            });
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col">
+        <h3 class="font-bold text-slate-800 text-sm mb-0.5">주요 창업가 배출 국가</h3>
+        <p class="text-xs text-slate-400 mb-4">글로벌 솔로프리너 활성화 국가 랭킹</p>
+        <div class="flex-1 relative" style="min-height:230px">
+          <canvas id="chartCountry"></canvas>
+        </div>
+      </div>
 
-            uniqueCountries.forEach(ctry => {
-                const opt = document.createElement('option');
-                opt.value = ctry;
-                opt.textContent = ctry;
-                countryFilter.appendChild(opt);
-            });
+    </div>
+  </section>
 
-            // Set up event listeners for filters
-            document.getElementById('search-input').addEventListener('input', applyFilters);
-            document.getElementById('filter-industry').addEventListener('change', applyFilters);
-            document.getElementById('filter-country').addEventListener('change', applyFilters);
-            document.getElementById('sort-revenue').addEventListener('change', applyFilters);
-        }
+  <!-- ── Section 3: Insights (dark) ── -->
+  <section id="insights" class="scroll-mt-20">
+    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-lg p-8 relative overflow-hidden">
+      <div class="absolute -right-20 -bottom-20 w-72 h-72 bg-indigo-500 opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -top-20 w-72 h-72 bg-teal-400 opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10">
+        <div class="flex flex-wrap items-center gap-3 mb-3">
+          <span class="bg-indigo-500 text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">Insight Report</span>
+          <h2 class="text-xl font-extrabold">1인 창업 성공 공식 분석</h2>
+        </div>
+        <p class="text-slate-300 text-sm max-w-3xl mb-8 leading-relaxed">
+          97개의 성공적인 글로벌 솔로프리너 사례에서 공통적으로 도출된 성공 트렌드 및 전략적 공통 분모입니다. 각 카드의 <strong>'분석 보기'</strong> 버튼을 클릭하면 세분화된 심층 리포트를 확인할 수 있습니다.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-        // Sticky Nav Scrolling Logic
-        function initNavigation() {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('section[id]');
+          <div class="insight-card bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/10 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-300 mb-4">
+                <i data-lucide="megaphone" class="w-5 h-5"></i>
+              </div>
+              <h4 class="font-bold text-base text-white mb-2">초기 오디언스 기반 빌딩</h4>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                스타듀 밸리(Eric Barone), 디자인조이(Brett Williams) 등 상위 창업가들은 제품 출시 전 커뮤니티(Reddit, Twitter)나 <strong class="text-white">빌드인퍼블릭(Build in Public)</strong> 방식을 통해 사전 오디언스를 확보했습니다.
+              </p>
+            </div>
+            <button onclick="openInsight(1)" class="mt-5 w-full py-2 px-3 bg-white/10 hover:bg-teal-500 hover:text-slate-950 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
+              분석 보기 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-                    
-                    if (targetSection) {
-                        const offsetTop = targetSection.getBoundingClientRect().top + window.pageYOffset - 80;
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                        updateActiveNav(link);
-                    }
-                });
-            });
+          <div class="insight-card bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/10 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-300 mb-4">
+                <i data-lucide="hammer" class="w-5 h-5"></i>
+              </div>
+              <h4 class="font-bold text-base text-white mb-2">노코드 및 간결한 테크 스택</h4>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Webflow, Bubble, Shopify 등 노코드/로우코드 기술 발전으로 기술 장벽이 낮아졌습니다. 복잡한 개발 인프라 없이 빠르게 <strong class="text-white">MVP를 출시하고 즉시 수익을 창출</strong>하는 것이 공통점입니다.
+              </p>
+            </div>
+            <button onclick="openInsight(2)" class="mt-5 w-full py-2 px-3 bg-white/10 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
+              분석 보기 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
 
-            function updateActiveNav(activeLink) {
-                navLinks.forEach(link => {
-                    link.classList.remove('border-indigo-500', 'text-slate-900');
-                    link.classList.add('border-transparent', 'text-slate-500');
-                });
-                activeLink.classList.remove('border-transparent', 'text-slate-500');
-                activeLink.classList.add('border-indigo-500', 'text-slate-900');
-            }
+          <div class="insight-card bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/10 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300 mb-4">
+                <i data-lucide="repeat" class="w-5 h-5"></i>
+              </div>
+              <h4 class="font-bold text-base text-white mb-2">구독형 및 제품화된 서비스</h4>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                일반 외주 용역 방식을 벗어나 <strong class="text-white">제품화된 서비스(Productized Service)</strong> 혹은 SaaS 형태를 차용했습니다. 고정 요금제로 인력 추가 없이 확장 가능한 현금 흐름을 구축했습니다.
+              </p>
+            </div>
+            <button onclick="openInsight(3)" class="mt-5 w-full py-2 px-3 bg-white/10 hover:bg-amber-500 hover:text-slate-950 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
+              분석 보기 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
 
-            const observerOptions = {
-                root: null,
-                rootMargin: '-10% 0px -70% 0px',
-                threshold: 0
-            };
+        </div>
+      </div>
+    </div>
+  </section>
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.getAttribute('id');
-                        const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
-                        if (matchingLink) {
-                            updateActiveNav(matchingLink);
-                        }
-                    }
-                });
-            }, observerOptions);
+  <!-- ── Section 4: Database ── -->
+  <section id="database" class="scroll-mt-20">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
-            sections.forEach(section => observer.observe(section));
-        }
+      <!-- Control panel -->
+      <div class="p-6 border-b border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+          <div>
+            <h3 class="text-lg font-extrabold text-slate-900">1인 비즈니스 케이스 데이터베이스</h3>
+            <p class="text-xs text-slate-500 mt-0.5">필터 및 검색으로 다양한 1인 창업 사례의 세부 전략을 분석하세요.</p>
+          </div>
+          <span id="filter-badge" class="flex-shrink-0 inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            총 97개 사례
+          </span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="relative sm:col-span-2 lg:col-span-1">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <input id="search-input" type="text" placeholder="창업자, 제품, 키워드 검색..."
+              class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400">
+          </div>
+          <select id="filter-industry" class="py-2.5 px-3 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">모든 산업군</option>
+          </select>
+          <select id="filter-country" class="py-2.5 px-3 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">모든 국가</option>
+          </select>
+          <select id="sort-select" class="py-2.5 px-3 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">정렬 방식 (연 매출 순)</option>
+            <option value="high">연 매출 높은 순</option>
+            <option value="low">연 매출 낮은 순</option>
+            <option value="recent">최신 연도 순</option>
+          </select>
+        </div>
+      </div>
 
-        // Calculate and Render Dashboard Stats Card
-        function renderDashboardStats() {
-            document.getElementById('stat-total-cases').textContent = `${rawCaseData.length} 개`;
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">창업가 / 비즈니스</th>
+              <th class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">산업 분야</th>
+              <th class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hide-mobile">국가 / 연도</th>
+              <th class="px-5 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">연 매출</th>
+              <th class="px-5 py-3.5 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">분석 보기</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-slate-100 bg-white"></tbody>
+        </table>
+      </div>
 
-            const maxRevCase = rawCaseData.reduce((prev, current) => (prev.revenue > current.revenue) ? prev : current);
-            document.getElementById('stat-max-revenue').textContent = `$${(maxRevCase.revenue / 1000000).toFixed(0)}M`;
-            document.getElementById('stat-max-owner').textContent = `${maxRevCase.business} (${maxRevCase.founder})`;
+      <!-- Empty state -->
+      <div id="empty-state" class="hidden py-16 text-center">
+        <i data-lucide="search-x" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+        <p class="text-sm font-semibold text-slate-500">검색 결과가 없습니다</p>
+        <p class="text-xs text-slate-400 mt-1">다른 키워드나 필터를 사용해보세요.</p>
+      </div>
 
-            const sumRevenue = rawCaseData.reduce((acc, current) => acc + current.revenue, 0);
-            const avgRevenue = sumRevenue / rawCaseData.length;
-            document.getElementById('stat-avg-revenue').textContent = `$${(avgRevenue / 1000000).toFixed(2)}M`;
+      <!-- Pagination footer -->
+      <div class="bg-slate-50 px-5 py-4 border-t border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p class="text-xs text-slate-500">
+            현재 <span id="pg-start" class="font-semibold">1</span>~<span id="pg-end" class="font-semibold">10</span>건 표시 중 
+            (총 <span id="pg-total" class="font-semibold">97</span>건)
+          </p>
+          <nav id="pagination-nav" class="flex items-center gap-1 flex-wrap"></nav>
+        </div>
+      </div>
 
-            const indCounts = {};
-            rawCaseData.forEach(item => {
-                indCounts[item.industry] = (indCounts[item.industry] || 0) + 1;
-            });
-            let topInd = "";
-            let topCount = 0;
-            for (const [ind, count] of Object.entries(indCounts)) {
-                if (count > topCount) {
-                    topCount = count;
-                    topInd = ind;
-                }
-            }
-            document.getElementById('stat-top-industry').textContent = topInd;
-            document.getElementById('stat-top-industry-ratio').textContent = `전체 케이스의 약 ${((topCount / rawCaseData.length) * 100).toFixed(0)}% 점유`;
-        }
+    </div>
+  </section>
 
-        // Apply Filters and Paginate Data
-        function applyFilters() {
-            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
-            const industryFilter = document.getElementById('filter-industry').value;
-            const countryFilter = document.getElementById('filter-country').value;
-            const sortOrder = document.getElementById('sort-revenue').value;
+</main>
 
-            filteredData = rawCaseData.filter(item => {
-                const matchesSearch = item.founder.toLowerCase().includes(searchQuery) || 
-                                      item.business.toLowerCase().includes(searchQuery) ||
-                                      item.desc.toLowerCase().includes(searchQuery) ||
-                                      item.tools.toLowerCase().includes(searchQuery);
-                const matchesIndustry = industryFilter === "" || item.industry === industryFilter;
-                const matchesCountry = countryFilter === "" || item.country === countryFilter;
+<!-- ── Footer ── -->
+<footer class="bg-white border-t border-slate-100 mt-16">
+  <div class="max-w-7xl mx-auto px-4 py-8 text-center">
+    <p class="text-xs text-slate-400">© 2026 Solopreneur 100 Case Analysis Dashboard · <strong class="text-slate-500">Welaunch News</strong></p>
+    <p class="text-xs text-slate-400 mt-1">전 세계 1인 창업가들의 실제 케이스를 데이터로 분석한 인터랙티브 리포트입니다.</p>
+  </div>
+</footer>
 
-                return matchesSearch && matchesIndustry && matchesCountry;
-            });
+<!-- ── Modal: Case Detail ── -->
+<div id="modal-case" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen px-4 py-8">
+    <div id="modal-case-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="modal-enter relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl border border-slate-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-indigo-900 to-indigo-800 px-6 py-6 text-white">
+        <button id="btn-close-case" class="absolute top-4 right-4 text-white/70 hover:text-white" aria-label="닫기">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span id="m-industry" class="badge-industry text-xs font-bold"></span>
+          <span class="text-sm opacity-70 flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i><span id="m-country"></span>
+          </span>
+          <span class="text-sm opacity-70 flex items-center gap-1">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i><span id="m-year"></span>년 창업
+          </span>
+        </div>
+        <h3 class="text-2xl font-extrabold" id="m-business">-</h3>
+        <p class="text-indigo-200 text-sm mt-1" id="m-desc">-</p>
+      </div>
+      <div class="px-6 py-5 space-y-5">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 rounded-xl p-4 border border-slate-100">
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">창업가</span>
+            <span class="text-sm font-semibold text-slate-800" id="m-founder">-</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">연 매출</span>
+            <span class="text-sm font-bold text-emerald-600" id="m-revenue">-</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">초기 투자금</span>
+            <span class="text-sm font-semibold text-slate-700" id="m-investment">-</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">직원 수</span>
+            <span class="text-sm font-semibold text-slate-700" id="m-employees">-</span>
+          </div>
+        </div>
+        <div class="border-l-4 border-indigo-500 pl-4">
+          <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5 mb-2">
+            <i data-lucide="lightbulb" class="w-4 h-4 text-indigo-500"></i> 아이디어를 떠올리게 된 계기
+          </h4>
+          <p class="text-sm text-slate-700 leading-relaxed" id="m-trigger">-</p>
+        </div>
+        <div class="border-l-4 border-teal-500 pl-4">
+          <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5 mb-2">
+            <i data-lucide="users-round" class="w-4 h-4 text-teal-500"></i> 주요 고객 확보 채널
+          </h4>
+          <p class="text-sm text-slate-700 leading-relaxed" id="m-marketing">-</p>
+        </div>
+        <div id="m-tools-wrap" class="border-l-4 border-amber-500 pl-4">
+          <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5 mb-2">
+            <i data-lucide="wrench" class="w-4 h-4 text-amber-500"></i> 활용 도구
+          </h4>
+          <p class="text-sm text-slate-700" id="m-tools">-</p>
+        </div>
+        <div class="border-l-4 border-violet-500 pl-4">
+          <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5 mb-2">
+            <i data-lucide="tag" class="w-4 h-4 text-violet-500"></i> 제품 / 가격
+          </h4>
+          <p class="text-sm text-slate-700" id="m-price">-</p>
+        </div>
+      </div>
+      <div class="bg-slate-50 px-6 py-4 flex items-center justify-between border-t border-slate-100">
+        <a id="m-website-link" href="#" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+          <i data-lucide="external-link" class="w-4 h-4"></i> 공식 웹사이트 방문하기
+        </a>
+        <button id="btn-close-case-footer" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition-colors">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            if (sortOrder === "high") {
-                filteredData.sort((a, b) => b.revenue - a.revenue);
-            } else if (sortOrder === "low") {
-                filteredData.sort((a, b) => a.revenue - b.revenue);
-            } else {
-                filteredData.sort((a, b) => a.founder.localeCompare(b.founder));
-            }
+<!-- ── Modal: Insight Detail ── -->
+<div id="modal-insight" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen px-4 py-8">
+    <div id="modal-insight-overlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm"></div>
+    <div class="modal-enter relative bg-white rounded-2xl shadow-2xl w-full max-w-xl border border-slate-100 overflow-hidden">
+      <div class="bg-indigo-950 px-6 py-6 text-white">
+        <button id="btn-close-insight" class="absolute top-4 right-4 text-white/70 hover:text-white" aria-label="닫기">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-400 text-slate-900 mb-3" id="i-tag">INSIGHT REPORT</span>
+        <h3 class="text-xl font-extrabold" id="i-title">-</h3>
+      </div>
+      <div class="px-6 py-6 text-sm text-slate-700 leading-relaxed space-y-3" id="i-body"></div>
+      <div class="bg-slate-50 px-6 py-4 flex justify-end border-t border-slate-100">
+        <button id="btn-close-insight-footer" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors">
+          인사이트 확인 완료
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            currentPage = 1;
-            updateTableUI();
-        }
+<script>
+const caseData = [
+  {
+    founder: `Eric Barone`,
+    business: `Stardew Valley`,
+    url: `stardewvalley.net`,
+    desc: `모바일 비디오 게임`,
+    industry: `Media`,
+    product: `Product`,
+    price: `스타듀 밸리의 가격은 iOS에서 4.99달러, Steam에서 13.99달러입니다.`,
+    revenue: 300000000,
+    investment: `N/A`,
+    trigger: `2011년, Eric은 취업 가능성을 높이기 위해 비디오 게임인 스타듀 밸리 작업을 시작했습니다.`,
+    marketing: `에릭은 웹사이트와 하위 레딧을 개설하여 업데이트를 공유하고 게이머들의 피드백을 수집했습니다. 그는 이 오디언스를 활용하여 게임을 홍보하고, 게이머들에게 스타듀 밸리 플레이 팁을 제공하고, 자주 묻는 질문에 답했습니다. 앱스토어 출시 첫 3주 만에 수만 장이 판매되고 100만 달러 이상의 매출을 올렸습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2011`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/2016-881b01d81d794d2d853545d64efd587a?pvs=4`
+  },
+  {
+    founder: `Gary Brewer`,
+    business: `BuiltWith`,
+    url: `builtwith.com`,
+    desc: `웹사이트 내 어떤 B2B 툴이 사용되었는지 알아볼 수 있는 툴`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Gary는 $295 - $995의 세 가지 구독을 보유하고 있습니다. 총 3,000명의 유료 고객이 있습니다.`,
+    revenue: 14000000,
+    investment: `$1,000 - $5,000`,
+    trigger: `다음 아이디어를 찾던 중 자연스럽게 다른 웹사이트에서 영감을 얻었습니다. 웹 사이트의 소스 코드를 살펴보던 중(프로그래머들이 종종 그러하듯이) Brewer는 Java 고유의 코드를 발견하고 해당 웹 사이트가 해당 기술을 사용하여 구축되었음을 추론할 수 있었습니다.  그리고 바로 실행에 옮겼습니다.  \\"모든 웹사이트가 사용하는 정확한 기술을 알 수 있다면 정말 멋지지 않을까요?\\".`,
+    marketing: `주요 성장 동력은 Gary가 수백만 개의 비즈니스 정보가 있는 온라인 디렉토리인 AboutUs의 설립자에게 자신의 웹사이트를 보여준 후 모든 기록에 BuiltWith 링크를 추가하기로 결정한 것입니다. 그 결과 트래픽이 10배로 증가했습니다. 이제 그의 고객 대부분은 입소문과 유기적 트래픽을 통해 유입됩니다.`,
+    employees: `0(2011년경 게리가 공동 설립자를 영입)`,
+    country: `Australia`,
+    year: `2007`,
+    tools: `ZenDesk`,
+    detail_url: `https://tuemarz.notion.site/1-400-84651cde27354a75954c117f315d83ee?pvs=4`
+  },
+  {
+    founder: `John David Busch`,
+    business: `Busch Global`,
+    url: `buschglobal.com`,
+    desc: `프랜차이즈 성장 컨설턴트`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `고객에게 확장 가능하고 지능적인 성장을 제공하는 솔루션을 제공합니다.`,
+    revenue: 12000000,
+    investment: `$10,000 - $20,000`,
+    trigger: `존은 기업가 정신과 비즈니스 성장에 대한 열정으로 프랜차이즈 및 개발 파트너로서 부쉬 글로벌을 처음 설립하게 되었습니다. 그의 초기 성공은 프랜차이즈의 잠재력을 입증하며 사업 아이디어에 영감을 불어넣었습니다.`,
+    marketing: `잠재 고객과의 관계 구축 및 연결을 통한 네트워킹은 Busch Global의 성공을 이끌어 왔고 앞으로도 계속 이어질 중요한 요소입니다. 하지만 이 기업은 여전히 SEO를 수행하고 웹사이트를 정기적으로 업데이트합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `1995`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/100-7e4b7117214d4ee3827193268a88224d?pvs=4`
+  },
+  {
+    founder: `Oliver Brocato`,
+    business: `Tabs Chocolate`,
+    url: `tabs.co`,
+    desc: `섹스 초콜릿 브랜드`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `탭스 초콜릿은 세 가지 사이즈가 있습니다: 1박스, 1박스, 3박스가 상자당 $38.99, 상자당 $36.26, 상자당 $32.36에 판매됩니다.`,
+    revenue: 11000000,
+    investment: `< $1,000`,
+    trigger: `이전 사업을 통해 이커머스와 TikTok에 대한 훌륭한 경험을 쌓은 올리버는 어느 날 TikTok에서 한 여성이 섹스 초콜릿(조회수 800만 회, 좋아요 200만 개)에 대해 이야기하는 것을 보고 특정 지역 상점에서는 해당 제품을 구매할 수 있지만 온라인에서는 구매할 수 없는 것을 확인할 수 있었습니다. 그 순간이 그의 아이디어에 불이 붙었습니다.`,
+    marketing: `올리버는 틱톡 친화적인 방식으로 제품을 디자인했습니다. 따라서 짧은 동영상 클립으로 제품의 전체 전제를 쉽게 설명할 수 있었습니다. 의심할 여지 없이 탭스 초콜릿의 주요 고객 확보 채널은 TikTok입니다. 또한 소셜 미디어 채널의 마이크로 인플루언서들과 파트너십을 맺어 사이트로 트래픽을 유도하고 있습니다.`,
+    employees: `0 (계약자 및 대행사가 거의 없습니다. 하지만 비즈니스 운영의 주축을 담당하고 있습니다.)`,
+    country: `USA`,
+    year: `2021`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/Youtube-Tabs-Chocolate-1-100-a32e9ac5bc55483b982497c0b41c302d?pvs=4`
+  },
+  {
+    founder: `Scott Delong`,
+    business: `Viral Nova`,
+    url: `viralnova.com`,
+    desc: `바이럴 콘텐츠를 위한 큐레이션 사이트`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `Scott은 애드센스를 통해 대부분의 수익을 창출합니다(조회수 1,000회당 2달러).`,
+    revenue: 10000000,
+    investment: `< $500`,
+    trigger: `2005년 애드센스로만 월 3만 달러(자신의 월급보다 훨씬 많은 금액)를 벌어들이는 SitePoint와 같은 사이트에서 영감을 받은 Scott은 다양한 사이트를 구축했고, 유럽을 여행하는 동안 부수입을 올리기 위한 또 다른 사이트로 Viral Nova를 시작했습니다. 당시에는 이 사이트가 지금처럼 수익성이 높을 것이라고는 전혀 예상하지 못했습니다.`,
+    marketing: `Scott은 자신이 작성한 게시물이 때때로 바이럴 지점에 도달하고 트래픽이 급증하여 애드센스를 통해 더 많은 수익을 창출하는 데 도움이 되었던 Facebook 덕분에 빠르게 성장할 수 있었다고 말합니다.`,
+    employees: `0(작가가 몇 명 있음)`,
+    country: `USA`,
+    year: `2013 (Sold 2015 for $100M)`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/8-ca70253c939c4522be7cc3ddde045783?pvs=4`
+  },
+  {
+    founder: `Markus Frind`,
+    business: `Plenty of Fish`,
+    url: `pof.com`,
+    desc: `데이트 사이트`,
+    industry: `Community`,
+    product: `Product`,
+    price: `이 사이트는 무료로 사용할 수 있었고 광고가 주요 수익 창출 채널이었습니다.`,
+    revenue: 10000000,
+    investment: `< $1,000`,
+    trigger: `마르쿠스는 이력서를 개선하기 위해 2003년에 Plenty of Fish를 시작했습니다. 당시 ASP.NET이라는 새로운 프로그래밍 언어가 출시되었는데, 그는 이에 대한 책을 읽는 대신 2주 만에 사이트를 직접 만들어 배웠습니다.  2008년에도 그는 전 세계를 여행하면서 노트북으로 사업을 운영했습니다. 사용자 수 1,500만 명, 매출 1,000만 달러에 이르렀을 때 그는 직원을 고용하기 시작했습니다.  2015년에는 5억 7,500만 달러에 회사를 매각했습니다.`,
+    marketing: `마르쿠스는 제품 기반 마케팅과 사용자에 대한 무료 액세스를 통해 사람들을 끌어모았습니다. 그는 심층적인 설문지를 통해 사용자의 성격을 평가하고 적합한 상대를 추천하는 'POF 케미스트리 예측기'를 도입했습니다. 이를 통해 사이트에 대한 신뢰도를 높이고 점차 합법적인 데이트 커뮤니티를 구축하는 데 성공했습니다.`,
+    employees: `0(2008년까지)`,
+    country: `Canada`,
+    year: `2003`,
+    tools: `ASP NET`,
+    detail_url: `https://tuemarz.notion.site/39-b6afbd14f0e54e1eb055d23387b19d00?pvs=4`
+  },
+  {
+    founder: `Amit Agarwal`,
+    business: `Digital Inspiration`,
+    url: `digitalinspiration.com`,
+    desc: `문서, 스프레드시트, 슬라이드 등을 위한 Google 플러그인`,
+    industry: `Software`,
+    product: `Product`,
+    price: `Amit에는 약 13개의 앱이 있습니다. 앱 가격은 연간 49달러에서 79달러 사이이며 수백만 번 다운로드되었습니다.`,
+    revenue: 10000000,
+    investment: `< $500`,
+    trigger: `회사를 그만둔 후 그는 자신의 기술력을 선보이기 위해 블로그를 시작했습니다. 2005년에는 고객이 첨부 파일이 포함된 병합 메일을 보낼 수 있는 Gmail 플러그인을 만들었습니다.`,
+    marketing: `기술 홍보를 위해 블로그를 시작하여 인도 최초의 전문 블로거가 되었습니다. 그의 블로그는 수천 명의 방문자를 끌어 모았습니다. 그는 이러한 앱을 구축하기 시작했고 블로그에서 플러그인을 홍보하여 잠재 고객을 활용했습니다.`,
+    employees: `0`,
+    country: `India`,
+    year: `2004`,
+    tools: `JavaScript`,
+    detail_url: `https://tuemarz.notion.site/bb611a27e7de4459a7b8476860527fc1?pvs=4`
+  },
+  {
+    founder: `Dan Ni`,
+    business: `TLDR Newsletter`,
+    url: `tldr.tech`,
+    desc: `기술 관련 뉴스레터`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `구독자에게는 무료입니다. TLDR 뉴스레터는 수익의 대부분을 뉴스레터 스폰서로부터 얻습니다. 스폰서 광고 한 건당 15,000달러 이상을 청구합니다.`,
+    revenue: 5000000,
+    investment: `< $500`,
+    trigger: `학업을 마친 후 뉴욕에서 주식 트레이더로 일하던 Dan은 소프트웨어와 엔지니어링에 관심이 많아 개발자가 웹 페이지에서 데이터를 추출할 수 있는 도구인 스크레이퍼 API를 만들게 되었습니다. 몇 년 동안 비즈니스를 운영하며 매출 규모를 6자리 수로 확장한 후, 기술과 최신 뉴스에 점점 더 매료되어 뉴스레터를 시작하기로 결심했습니다.`,
+    marketing: `Dan은 Reddit과 Quora 광고에 소액을 지출하는 것으로 시작하여 첫 달에 1,000명의 구독자를 확보할 수 있었습니다. 이제 그는 인스타그램, 페이스북, 링크드인, 트위터 등의 채널을 포함하는 전략적 유료 광고 전략으로 전환했습니다.`,
+    employees: `0(현재 프리랜서 조력자가 몇 명 있지만 혼자서 모든 것을 구축했습니다).`,
+    country: `USA`,
+    year: `2020`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/TLDR-7ff20236148f41b485557ed391b98cb8?pvs=4`
+  },
+  {
+    founder: `Jeff Sheldon`,
+    business: `Ugmonk`,
+    url: `ugmonk.com`,
+    desc: `데스크 가구, 라이프스타일 제품 제조사 및 큐레이터`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `업무용 전화기 및 모니터 스탠드부터 생산성 향상을 위한 노트 필기구에 이르기까지 Ugmonk의 제품 가격은 최저 39달러에서 800달러 이상에 이릅니다.`,
+    revenue: 5000000,
+    investment: `$1,000 - $5,000`,
+    trigger: `졸업 직후 풀타임 디자인 직업을 시작한 Jeff는 디자인을 우선시하는 사고방식으로 고품질의 제품을 만드는 것에 대해 고민했습니다. 처음에는 다른 사이트의 티셔츠를 디자인하는 전자 상거래 비즈니스로 시작했지만, 경기 침체기에 마침내 업무용 및 생산성 제품에 뛰어들게 되었습니다.`,
+    marketing: `Jeff는 현재 베스트셀러 제품인 '아날로그'를 출시하기 전까지는 이메일 마케팅과 인스타그램과 트위터에 콘텐츠를 게시하는 오가닉 고객 확보 방법에만 의존했습니다. 아날로그 출시 이후 유료 소셜 광고와 구글 광고는 긍정적인 ROI를 보였고, 오가닉 방식은 유료 방식과 병행하여 진행 중입니다.`,
+    employees: `1 (수년 동안 아내와 단둘이 일했지만 지금은 파트타임 도우미 5명으로 구성된 팀이 있음)`,
+    country: `USA`,
+    year: `2008`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/by-c797289d4dff4116a42272cdbf091780?pvs=4`
+  },
+  {
+    founder: `Ali Abdaal`,
+    business: `Ali Abdaal`,
+    url: `aliabdaal.com`,
+    desc: `생산성 및 자기계발 멘토`,
+    industry: `Media`,
+    product: `Online courses`,
+    price: `Ali의 수입은 YouTube 광고, 제휴 등 17개의 스트림을 통해 창출됩니다. 그는 또한 $995와 $4,995의 다양한 온라인 강좌를 만들었습니다.`,
+    revenue: 4000000,
+    investment: `$6,000 - $10,000`,
+    trigger: `알리가 케임브리지 대학교에 재학 중이던 2017년이었습니다. 그는 의사가 되기 위해 공부하고 있었습니다(성형외과를 전공하는 것이 꿈이었습니다). 당시 그는 다른 사람들의 공부와 시험 합격을 돕기 위해 동영상을 제작하기 시작했습니다. 이때 형과 함께 사람들의 입시 합격과 의학 진학을 돕는 플랫폼인 6Med라는 첫 번째 사업을 시작했습니다.`,
+    marketing: `알리는 매우 분석적인 접근 방식으로 YouTube 성장에 접근했습니다. 그는 구독자 수가 100만 명인 채널에 업로드된 동영상이 4,000개라는 사실을 연구했습니다. 즉, 평균적으로 1만~10만 명의 구독자를 확보하려면 418개의 동영상을 업로드해야 하고, 처음 천 명의 구독자를 확보하려면 152개의 동영상을 업로드해야 합니다. 이러한 통계를 파악한 후, 알리는 유튜버가 되는 것에 대해 진지하게 생각한 후 일주일에 최소 두 번 이상 동영상을 업로드하기 시작했습니다. 이러한 콘텐츠 전략과 함께 6개월 만에 91개의 동영상으로 구독자 1만 명을 달성할 수 있었습니다.  케임브리지 대학을 졸업한 후 그는 영국 국민보건서비스에서 주니어 닥터로 일하게 되었습니다. 2018년은 그가 시험 공부에 관한 동영상으로 첫 번째 '바이럴' 성공을 거둔 해이기도 합니다. 2018년에는 유튜브 구독자 10만 명을 돌파했고, 2020년 9월에는 구독자 100만 명을 기록했습니다. 그때부터 그는 자신이 배운 내용을 전수하기 위해 온라인 강좌를 게시하기 시작했습니다.`,
+    employees: `4 (채널 운영을 돕기 위해 2020년에 팀을 고용했습니다.)`,
+    country: `UK`,
+    year: `2017`,
+    tools: `Fantastical 3`,
+    detail_url: `https://tuemarz.notion.site/Youtube-Ali-495f3ddc6a604e51992696764b25a8a4?pvs=4`
+  },
+  {
+    founder: `Dickie Bush`,
+    business: `Ship 30 For 30`,
+    url: `ship30for30.com`,
+    desc: `사람들이 디지털 글쓰기를 시작할 수 있도록 설계된 코호트 기반 과정`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `이 과정은 2021년에 50달러에 시작되었으며 현재는 800달러로 책정되었습니다. 강좌에 등록하면 1,999달러에 퍼스트 메이트(First Mate)로 업그레이드할 수 있으며, 퍼스트 메이트는 창립자의 개인화된 피드백과 함께 강좌 운영 방식 및 사용된 모든 도구에 대한 전체 비하인드 스토리를 제공합니다.`,
+    revenue: 2500000,
+    investment: `N/A`,
+    trigger: `디키는 2020년부터 온라인에서 글을 쓰기 시작했습니다. 그는 뉴스레터를 작성하고 있었지만 9개월이 지난 후 구독자 수가 300명 정도에 불과했습니다. 사람들이 자신을 찾지 않는다면 사람들이 있는 곳으로 가서 두 배로 노력해야겠다고 결심했습니다. 사람들은 트위터에 있었습니다. 그래서 그는 계정을 늘리기 위해 30일 동안 30개의 글을 쓰기로 결심했습니다. 이 개인적인 글쓰기 도전은 사람들이 지속적으로 글을 게시할 수 있도록 돕는 Slack 책임 그룹으로 시작한 'Ship 30 for 30'의 토대가 되었습니다.`,
+    marketing: `트위터는 디키의 주요 성장 동력이었습니다. 그는 뉴스레터와 강좌를 통해 수천 명의 사람들에게 지속적으로 다가갈 수 있는 공식을 터득했습니다. 또한 이 과정의 핵심은 한 달 동안 매일 콘텐츠를 작성하고 게시하는 것으로 구성되어 있기 때문에 전체 코호트가 사실상 거대한 마케팅 팀 역할을 하게 됩니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2020`,
+    tools: `Samcart`,
+    detail_url: `https://tuemarz.notion.site/30-0-32-6-6b8ea826ff4f4ee8964fcc44e4c4b9cb?pvs=4`
+  },
+  {
+    founder: `Justin Welsh`,
+    business: `Justin Welsh`,
+    url: `justinwelsh.me`,
+    desc: `다른 개인 사업자와 기업가가 비즈니스를 성장시키는 데 도움이 되는 온라인 지식 제품입니다.`,
+    industry: `Media`,
+    product: `Online courses`,
+    price: `Justin은 두 개의 강좌(각 150달러), 뉴스레터 스폰서십, 구독 이메일을 제공합니다. 또한 가끔씩 코칭, 자문, 강연 활동을 하기도 합니다.`,
+    revenue: 2100000,
+    investment: `$10,000 - $20,000`,
+    trigger: `영업 담당 수석 부사장으로서 많은 스트레스를 견디다 못해 직장에서 물러나 컨설팅 사업을 시작하기로 결심했습니다. 그때부터 디지털 콘텐츠 제작을 시작했고, 그 후로도 계속해서 강좌를 출시하고, 많은 팔로워를 확보하고, 개인 사업가로서의 노력을 배가하는 등 계속 전진하고 있습니다.`,
+    marketing: `Justin은 링크드인에 연간 600회, 트위터에 500일 이상 연속으로 게시물을 올리고 있으며, 최근에는 검색 엔진 트래픽을 유도하기 위해 여러 페이지로 구성된 웹사이트로 전환했습니다. 그는 사이트의 SEO를 개선하기 위해 친구의 도움을 받고 있습니다.`,
+    employees: `월 01월 02 2023 14:00:00 GMT+0900 (일본 표준시)`,
+    country: `USA`,
+    year: `2019`,
+    tools: `Kajabi`,
+    detail_url: `https://tuemarz.notion.site/200-1-c986c9fb35ee415ba87b1f72c69f2547?pvs=4`
+  },
+  {
+    founder: `Kat Norton`,
+    business: `Miss Excel`,
+    url: `miss-excel.com`,
+    desc: `Microsoft Excels 온라인 과정 및 콘텐츠`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `Kat의 강좌 가격은 44달러에서 497달러 사이이며, 497달러에서 999달러의 번들 상품도 제공합니다.`,
+    revenue: 2000000,
+    investment: `N/A`,
+    trigger: `코로나19로 인한 봉쇄 조치로 Kat은 자신의 직업에 만족하지 못한다는 것을 깨달았습니다. 자신이 좋아하는 일이 무엇인지 고민하던 중, 그녀는 자신이 Excel 작업을 좋아한다는 글을 썼습니다. 친구들은 '엑셀 팁을 틱톡에 올리면 어떨까요?\\"라고 제안했습니다. 다음날 그녀는 이미 그 작업을 하고 있었습니다.`,
+    marketing: `Kat은 지루할 수 있는 주제인 Microsoft Excel에 창의성을 더했습니다. 그뿐만 아니라 기존과는 완전히 다른 방식으로 TikTok을 가르치면서 춤을 추는 등 극과 극의 모습을 연출했습니다. 그녀는 매일 동영상을 게시하는 것으로 시작했습니다.  또한 매월 웨비나를 개최하여 사람들이 Excel로 얼마나 많은 것을 성취할 수 있는지 보여줍니다. 이 웨비나는 일반적인 지루한 Zoom 통화가 아닙니다. 그녀는 이를 'Excel 파티'라고 부르며 한 번의 이벤트로 10만 달러의 수익을 창출할 수 있습니다.`,
+    employees: `0 (2023년부터 도움을 받기 시작함)`,
+    country: `USA`,
+    year: `2020`,
+    tools: `Thinkfic`,
+    detail_url: `https://tuemarz.notion.site/10-748db0161da54aca87c10257d61d84aa?pvs=4`
+  },
+  {
+    founder: `Alex Redfern`,
+    business: `Lingoci`,
+    url: `ingoci.com`,
+    desc: `온라인 어학 튜터링 플랫폼`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `링고시는 각 언어에 대해 55분 길이의 레슨을 정해진 개수로 제공합니다. 사용자가 레슨을 한 번에 하나씩 결제하는 것을 선호하는 경우, 레슨당 €23.90에 결제할 수 있습니다.`,
+    revenue: 1440000,
+    investment: `N/A`,
+    trigger: `런던의 한 에이전시에서 일하던 Alex는 한 사이트를 통해 튜터와 온라인 스웨덴어 레슨을 받고 있었습니다. 하지만 모든 강사의 실력이 만족스럽지 않았고 이사벨라라는 강사 한 명만 마음에 들었습니다. 그때 알렉스는 더 나은 사용자 경험을 위해 꼼꼼하게 검증한 강사만 고용하면 온라인 튜터링 사이트를 구축할 수 있겠다는 생각이 들었습니다.`,
+    marketing: `알렉스는 과외 수업이 충동 구매가 아니라는 사실을 깨달았습니다. 실용적인 이유로 필사적으로 과외를 찾는 사용자만이 어학 과외를 검색할 것입니다. 따라서 검색 엔진 광고는 알렉스의 가장 중요한 고객 확보 채널이 되었습니다. 시간이 지남에 따라 Alex는 여전히 Google 광고에서 일관성을 유지하고 있습니다. 하지만 지금은 추천도 많이 받습니다. 수강생이 기대 이상의 성과를 거두면 다른 사람에게 링고시를 추천하고, 알렉스는 그 수강생에게 무료 레슨을 제공합니다.`,
+    employees: `0`,
+    country: `Singapore`,
+    year: `2017`,
+    tools: `Twilio`,
+    detail_url: `https://tuemarz.notion.site/6-5037c3f9a92f4196b807b5aa55520be8?pvs=4`
+  },
+  {
+    founder: `Thomas Frank`,
+    business: `Thomas Frank`,
+    url: `thomasjfrank.com`,
+    desc: `Notion 리소스 및 코스`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `Thomas는 $149에서 $229에 이르는 Notion 템플릿을 판매합니다. 또한 Skillshare 또는 Nebula와 같은 다양한 플랫폼에서 여러 강좌를 제공하고 있습니다.`,
+    revenue: 1440000,
+    investment: `N/A`,
+    trigger: `2010년, 대학에 재학 중이던 Thomas는 대학 생활을 최대한 활용하기 위한 자신의 실험을 공유하기 위해 블로그를 시작했습니다. 그 이후로 그는 생산성과 자기 계발에 대한 자신의 관심을 YouTube, 여러 팟캐스트, 책 등에 적용했습니다. 회사 위키를 구축하려던 중 Google 문서 도구로 어려움을 겪던 중 Notion을 발견한 후 이 사업에 대한 아이디어를 얻었습니다.`,
+    marketing: `Thomas는 10년 넘게 온라인에서 콘텐츠를 제작해 왔습니다(처음에는 웹사이트에서, 그다음에는 유튜브 채널에서). 그런 다음 템플릿, 강좌, 리소스 및 뉴스레터와 같은 고품질의 무료 제품을 제공하여 방문자/시청자를 이메일 목록에 등록하고 나중에 향후 콘텐츠 및 유료 제품에 대한 프로모션을 받을 수 있도록 합니다.`,
+    employees: `6(주로 연구 및 콘텐츠 제작에 도움을 주기 위해)`,
+    country: `USA`,
+    year: `2012`,
+    tools: `Notion`,
+    detail_url: `https://tuemarz.notion.site/Notion-10-250-1a038fe9c6574df7accf8f477e93f8a8?pvs=4`
+  },
+  {
+    founder: `Adrian Wood`,
+    business: `Modern Producers`,
+    url: `modernproducers.com`,
+    desc: `음악 프로듀서에게 소프트웨어와 도구를 판매하는 전자상거래 플랫폼`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `Adrian의 Shopify 스토어에는 다양한 악기, 키트, 레이블 및 강좌 컬렉션이 있으며, 현대 프로듀서닷컴에서 검색할 수 있습니다.`,
+    revenue: 1440000,
+    investment: `< $500`,
+    trigger: `음악 프로듀서 출신인 Adrian이 음악 제작 커뮤니티에 환원하고 신진 독립 프로듀서와 대형 업계 플레이어 간의 공평한 경쟁의 장을 마련하기 위해 만든 것이 바로 '모던 프로듀서'입니다. 다른 아티스트가 성공할 수 있도록 돕는 것이 Adrian의 원동력입니다.`,
+    marketing: `Adrain은 음악 프로듀서 커뮤니티 사이에서 친선을 도모하기 위해 경품과 특별 혜택을 자주 제공하고 다양한 콘테스트를 개최합니다.  다른 채널로는 80~90%의 오픈율과 10~20%의 클릭률을 기록하는 페이스북 메신저 방송이 있습니다.`,
+    employees: `Adrian은 혼자서 주요 비즈니스를 운영하지만, 소수의 파트타임 직원과 함께 매우 체계적으로 운영합니다.`,
+    country: `USA`,
+    year: `2015`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/8-5-3a78c7f7aa3e4606b1b65fe8cc7fa469?pvs=4`
+  },
+  {
+    founder: `Becky Bavli`,
+    business: `T is for Tame`,
+    url: `tisfortame.com`,
+    desc: `유아용 헤어 케어 제품`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `Becky는 제품이 $8.99부터 시작하는 Shopify 스토어를 운영합니다. 구매자가 제품을 15% 할인받을 수 있는 브랜드 구독 옵션도 있습니다.`,
+    revenue: 1440000,
+    investment: `$20,000 +`,
+    trigger: `베키는 전직 광고 회사 임원이었고, 하루의 대부분을 고객사를 위한 광고 개발에 보냈습니다. 쌍둥이의 머리카락을 길들일 수 있는 좋은 제품을 찾지 못했을 때, 그녀는 놀랍지 않았습니다. 그녀는 항상 자신이 신념을 가지고 일하는 것을 꿈꿔왔기 때문입니다.`,
+    marketing: `매출의 80%는 Amazon, 10&, 소매점에서 발생하고 나머지는 이커머스 스토어에서 발생합니다. 트래픽을 늘리기 위해 마이크로 인플루언서와 파트너 관계를 맺고 이들을 제휴 프로그램으로 유도합니다. 또한 Amazon 전략을 계속 테스트하여 더 많은 고객 클릭을 유도합니다.`,
+    employees: `0 (베키가 현재 틱톡 에이전시 채용을 찾고 있습니다.)`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Amazon`,
+    detail_url: `https://tuemarz.notion.site/9-d4a668c1a76a4bf788d4821ac7a34c98?pvs=4`
+  },
+  {
+    founder: `Neville Medhora`,
+    business: `Neville Medhora`,
+    url: `copywritingcourse.com`,
+    desc: `카피라이팅 과정 및 콘텐츠`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `Neville의 카피라이팅 코스 가격은 월 $ 97 또는 연간 $ 750입니다.`,
+    revenue: 1300000,
+    investment: `< $500`,
+    trigger: `Neville은 앱수모에서 일하던 중 자신이 발송한 이메일이 전환되지 않는 것을 발견했습니다. 이를 개선하기 위해 한 번 시도해 보라는 요청을 받았을 때 전환율이 급증했습니다. 성공에 고무된 그는 첫 번째 온라인 강좌를 만들었습니다.`,
+    marketing: `첫 수강생은 그의 개인 네트워크, 그가 관여했던 회사의 직원 등을 통해 모집되었습니다. 하지만 수년 동안 온라인에 콘텐츠를 게시해 온 Neville은 SEO를 활용하여 자신의 강좌에 새로운 수강생을 확보하는 방법을 배웠고, 이것이 그의 주요 수강생 확보 채널이 되었습니다. 일단 누군가가 웹사이트를 방문하면 이메일을 남기도록 하는 것이 주된 노력입니다. 그런 다음 6개월의 이메일 퍼널이 트리거되어 다음 달에 영향을 미칩니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: ``,
+    tools: `Hypefury`,
+    detail_url: `https://tuemarz.notion.site/Youtube-d2e45306b6c345fc82d245869dce11e9?pvs=4`
+  },
+  {
+    founder: `Graham Cochrane`,
+    business: `The Recording Revolution LLC`,
+    url: `recordingrevolution.com`,
+    desc: `뮤지션을 위한 온라인 강좌 및 멤버십 사이트`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `그레이엄의 강좌인 믹싱 유니버시티의 일시불 가격은 147달러이며, 할인되지 않을 경우 원래 가격은 297달러입니다. 또 다른 강좌인 토탈 홈 레코딩은 각각 197달러와 297달러로 책정되어 있으며, 뮤지컬 수입도 147달러로 책정되어 있습니다.`,
+    revenue: 1200000,
+    investment: `< $500`,
+    trigger: `그레이엄은 금융 스타트업에서 해고된 후 자금이 부족해지자 프리랜서 수입원을 찾고 있었습니다. 결국 그는 대학 시절 오디오 엔지니어로서 스튜디오에서 일한 경험을 블로그에 올리기 시작했습니다. 이 콘텐츠는 Google과 YouTube에서 수많은 청중에게 반향을 불러일으켰고, 결국 그레이엄은 강좌와 부트캠프를 통해 수익을 창출하기로 결정했습니다.`,
+    marketing: `콘텐츠 마케팅은 Graham이 시간을 투자하는 유일한 마케팅 채널입니다. 그는 음악 시장과 틈새 시장을 중심으로 한 기사와 동영상을 꾸준히 게시하고 있으며, SEO 전문가는 아니지만 그가 제공하는 가치는 수백만 건의 사이트 트래픽과 YouTube 조회수로 되돌아오고 있습니다.`,
+    employees: `시간제 채용이 거의 없음`,
+    country: `USA`,
+    year: `2009`,
+    tools: `Kajabi`,
+    detail_url: `https://tuemarz.notion.site/5-120-65f4acb275cf48a5abed52c00fa0924c?pvs=4`
+  },
+  {
+    founder: `Jordan Peterson`,
+    business: `Allbe Canada`,
+    url: `allbe.ca`,
+    desc: `건강 보조 식품`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `다양한 건강식품을 취급하는 올베캐나다는 고품질 비타민과 보충제를 최저가로 제공합니다.`,
+    revenue: 1200000,
+    investment: `N/A`,
+    trigger: `조던은 의과대학에서 영양학을 전공하고 강사로 일하면서 인간의 건강과 영양의 복잡성을 이해하는 데 기초를 다졌습니다. 하지만 올비 캐나다를 설립하게 된 진정한 동기는 그의 전문적 배경이 아닌 개인적인 경험에서 비롯되었습니다. 그의 어머니는 만성 질환 진단을 받았습니다. 영양을 포함한 생활 습관을 바꾸면 어머니의 건강을 개선할 수 있다는 현실은 그에게 큰 깨달음을 주었습니다. 그는 건강 보조 식품이 전반적인 건강을 지원하는 잠재력을 탐구하며 광범위한 연구를 시작했습니다. 이 과정에서 사람들의 건강을 자연스럽고 총체적으로 지원할 수 있는 제품을 만들겠다는 올비 캐나다의 아이디어가 떠올랐습니다.  그는 테스트 단계에서 NMN 4500의 잠재적 효과를 보고 올바른 아이디어라는 것을 알았습니다. 그들은 광범위한 시험과 연구를 수행하여 그 이점을 확인했습니다. 이는 이론에 기반한 다른 사업 아이디어와는 달랐습니다. 여기서 그는 사람들의 건강 개선에 진정으로 도움이 될 수 있는 제품, 즉 가시적인 결과를 확인했습니다.`,
+    marketing: `올비 캐나다는 탄탄한 온라인 판매와 운영 준비로 번창하고 있으며, 주로 미국과 중국 시장을 타깃으로 글로벌 확장에 박차를 가하고 있습니다.`,
+    employees: `1`,
+    country: `Canada`,
+    year: `2001`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/10-073819ac22f442c9822215e3d4934b6f?pvs=4`
+  },
+  {
+    founder: `Dan Go`,
+    business: `High Performance Founder`,
+    url: `dango.co`,
+    desc: `창업자 및 임원을 위한 피트니스 코치`,
+    industry: `Coaching`,
+    product: `Niche blog`,
+    price: `Dan은 397달러에 판매되는 Lean Body 90이라는 자기 주도형 코스를 보유하고 있으며, 고객이 목표를 달성할 수 있도록 1:1로 도와주며, 가격은 고급이지만 공개하지 않습니다.`,
+    revenue: 1000000,
+    investment: `N/A`,
+    trigger: `편안한 직장 생활을 하던 댄은 어머니의 안타까운 죽음으로 인해 헬스장에서 많은 시간을 보내게 되었습니다. 운동은 그가 우울한 생각에서 벗어나 삶을 정상으로 되찾는 데 도움이 되었습니다. 이때 댄은 직장을 그만두고 자신이 열정적으로 좋아하는 일을 하기로 결심했습니다. 그는 얼마 지나지 않아 개인 트레이닝에 뛰어들었습니다.`,
+    marketing: `Dan은 페이스북에서 코칭 마케팅을 시작했는데, 친구 수 5,000명 제한으로 인해 확장할 수 없을 때까지는 큰 관심을 불러일으키는 소스였습니다. 그런 다음 그는 트위터로 옮겨 트위터에서 기업가들을 대상으로 틈새 포지셔닝을 대규모로 타겟팅했습니다. 불과 몇 년 만에 Dan은 지금까지 84,000개의 트윗을 게시했습니다! 또한 그는 트위터에서 무료 동영상을 홍보하여 구독자 수가 5천 명에서 2021년에는 2만 명 이상으로 늘어났습니다.`,
+    employees: `파트타임/프리랜서 팀원 수 감소`,
+    country: `Canada`,
+    year: `2010`,
+    tools: `ConvertKit`,
+    detail_url: `https://tuemarz.notion.site/120-b6ed16a2b1a04a808b3a2272e5990b1d?pvs=4`
+  },
+  {
+    founder: `Mike Perham`,
+    business: `Sidekiq`,
+    url: `sidekiq.org`,
+    desc: `오픈 소스 ASYC 작업 서비스`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Sidekiq는 주로 소규모 사용자를 위한 무료 오픈 소스 도구이지만, 프로 버전은 연간 $995입니다.`,
+    revenue: 1000000,
+    investment: `N/A`,
+    trigger: `Mike는 Ruby 생태계에서 기존 작업 처리 솔루션의 한계를 해결하고 대량의 비동기 처리를 처리할 수 있는 도구를 만들고자 했습니다.`,
+    marketing: `Mike는 포럼, 블로그 게시물, 소셜 미디어와 같은 온라인 채널을 통해 Sidekiq을 적극적으로 홍보했습니다. 그는 라이브러리의 기능, 이점 및 사용 사례에 대한 정보를 공유하여 개발자들 사이에서 인지도를 높이고 관심을 불러일으키는 데 도움을 주었습니다.  오픈소스라는 점도 큰 이점이었습니다. Sidekiq은 Ruby 라이브러리의 중앙 저장소인 RubyGems.org에서 보석으로 제공되었습니다. Sidekiq을 젬으로 게시함으로써 개발자는 자신의 Ruby 프로젝트에서 쉽게 찾아서 설치할 수 있었습니다.  또한 Ruby 및 Rails 커뮤니티에 참여하여 토론에 참여하고 질문에 답변하고 지원을 제공했습니다. 커뮤니티에 적극적으로 참여함으로써 그는 신뢰와 믿음을 쌓았고, 그 결과 사용자들이 Sidekiq을 사용해 보도록 유도했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2011`,
+    tools: `Ruby On Rails`,
+    detail_url: `https://tuemarz.notion.site/636f3821b413406388ca52f04eabfcfe?pvs=4`
+  },
+  {
+    founder: `Jack Butcher`,
+    business: `Visualise Value`,
+    url: `visualizevalue.com`,
+    desc: `디자인, 컨설팅 및 교육 기업`,
+    industry: `Marketing`,
+    product: `Services`,
+    price: `Jack은 디자이너와 디지털 크리에이터를 위한 99달러 가격의 여러 강좌를 만들었습니다(모두 비공개 커뮤니티에 액세스할 수 있음).`,
+    revenue: 1000000,
+    investment: `< $1,000`,
+    trigger: `몇 년 동안 에이전시에서 일한 후, 잭은 브랜드가 어떤 비용을 지불하고 있는지 듣고 볼 수 있는 수준에서 사업을 운영했습니다. 그때 그는 고용주가 제공하는 서비스의 90%를 제공하면서도 혼자서 일할 경우 더 많은 마진을 가져갈 수 있다는 사실을 깨달았습니다.`,
+    marketing: `Jack의 매출 중 80~90%는 오가닉 소셜을 통해 발생합니다. 그는 지난 몇 년 동안 매우 독특하고 눈에 띄는 비주얼을 제작하고 공유하여 많은 사람들에게 도달할 수 있도록 노력해 왔습니다. 그는 모든 플랫폼의 바이오 링크를 사용하여 사람들을 Visualize Value의 스토어로 안내합니다.`,
+    employees: `0 (아내 셀리아와 함께 일함)`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/Youtube-100-630517fee7c342ba944a3a3b2ca9703b?pvs=4`
+  },
+  {
+    founder: `Ryan Milton`,
+    business: `TeamFFLEX`,
+    url: `teamfflex.com`,
+    desc: `온라인 개인 트레이닝 플랫폼`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Ryan은 한 달에 799달러부터 시작하는 월별 및 연간 패키지를 설정했습니다.`,
+    revenue: 984000,
+    investment: `< $500`,
+    trigger: `Ryan은 헬스장을 이용할 여유가 없는 사람부터 시간 문제로 트레이너를 고용할 수 없는 사람까지 헬스장의 한계를 인식했습니다. 이 문제를 온라인으로 해결하려면 엄청난 비용이 들 수 있습니다.`,
+    marketing: `인스타그램은 24만 명 이상의 팔로워를 보유한 팀플렉스의 가장 큰 소셜 미디어 채널입니다! 콘텐츠 전략은 유머와 추천글이 균형 있게 혼합되어 있으며, 퍼널 리드 생성 전략의 최상단 역할을 합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2014`,
+    tools: `Later`,
+    detail_url: `https://tuemarz.notion.site/ARR-100-2723dc97e26844db8f15d66d88f50a62?pvs=4`
+  },
+  {
+    founder: `Scott Bartnick`,
+    business: `The Five Day Startup`,
+    url: `thefivedaystartup.com`,
+    desc: `아마존(및 이커머스) 컨설팅 서비스`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `Scott은 1:1 컨설팅 세션은 월 $500, 최적화 컨설팅은 $3800, 아마존 스타터 컨설팅 패키지는 $5000에 판매하고 있습니다.`,
+    revenue: 960000,
+    investment: `< $500`,
+    trigger: `포춘지 선정 500대 기업에서 근무했던 Scott은 자신의 업적에 자부심을 느끼면서도 그 이상의 무언가에 도전하고 싶었습니다. 여행을 다니며 온라인으로 돈을 벌고 싶다는 꿈을 이루기 위해 여러 가지 사업을 시작했고, 그 자금을 마련하기 위해 노력했습니다. 결국 이커머스에 뛰어들어 몇 번 실패하고 시간이 지날수록 실수를 깨닫게 된 그는 아마존에 이어 이커머스 컨설팅으로 두 배로 사업을 확장하기 시작했습니다.`,
+    marketing: `Scott은 100개 이상의 고객사를 보유한 소셜 미디어 마케팅 대행사의 전직 창립자이기도 했습니다! 이를 통해 플랫폼의 성장 전략을 배울 수 있었고, 최근까지 인스타그램은 더파이브데이스타트업의 주요 고객 확보 채널이기도 했습니다. (그의 소셜 미디어 채널을 모두 합치면 팔로워 수가 50만 명이 넘습니다!)`,
+    employees: `0(그래픽 디자인과 같은 작업 아웃소싱)`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/8-6857d7d4cac34e9d9bacacecb92d6791?pvs=4`
+  },
+  {
+    founder: `Lucy Bloomfield`,
+    business: `10k Customers`,
+    url: `tenthousandcustomers.com`,
+    desc: `이커머스 창업자를 위한 12개월 프로그램`,
+    industry: `Coaching`,
+    product: `Online courses`,
+    price: `루시는 먼저 자신의 프로그램에 적합한 지원자를 파악하고 그에 맞는 가격 게시물을 제안합니다. 신청서를 제출하기 위해 루시의 잠재 고객은 웹사이트(tenhousandcustomers.com)의 단계에 따라 신청서를 제출합니다.`,
+    revenue: 720000,
+    investment: `< $500`,
+    trigger: `루시는 이전 회사에서 퇴사한 후 다른 벤처에 투자할 자본이 필요했고, 프리랜서로 일하면서 과거에 배웠던 기술을 컨설팅했습니다. 그때부터 루시는 자신의 프로그램을 구축하기 시작했습니다.`,
+    marketing: `Lucy는 단 두 개의 채널로 회사를 성장시켰습니다: 페이스북 광고와 전화 통화 + 이메일.  그녀의 페이스북 광고는 프로그램을 광고하는 것이 아니라 문제 해결에 대해 이야기한 후 리드에게 옵트인 양식을 제공합니다.  그녀의 \\"전화 받기\\" 이메일 전략은 매우 간단하며, 루시가 이 사례 연구에서 언급한 스크립트입니다.`,
+    employees: `0(현재 영업팀 구성 중)`,
+    country: `Australia`,
+    year: ``,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/6-0ff80cc4b2e645608acef7fc54ae2566?pvs=4`
+  },
+  {
+    founder: `Craig Adam`,
+    business: `Craig Adam`,
+    url: `craigadamjoinery.co.uk`,
+    desc: `주방 도구 및 용품 판매자`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `개인 사업자는 마진율이 최대 40%인 제품 판매에 집중합니다.`,
+    revenue: 720000,
+    investment: `$10,000 - $20,000`,
+    trigger: `크레이그는 8-5 직장에 만족하지 못하고 다른 수입 창출 방법을 찾고 있던 중 우연히 아마존 FBA 비즈니스를 알게 되었습니다.`,
+    marketing: `Adam은 고객을 확보하는 데 도움이 되는 이메일 목록 구축 전략을 구현했습니다. 또한 고객 신뢰를 구축하는 데 관심이 많아서 진솔한 고객 리뷰에 대한 대가로 쿠폰을 발행하고 있습니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2015`,
+    tools: `Amazon`,
+    detail_url: `https://tuemarz.notion.site/6-FBA-7395a69fce464e838059cdc3f05a4d57?pvs=4`
+  },
+  {
+    founder: `Mac Martine`,
+    business: `Castanet`,
+    url: `gocastanet.com`,
+    desc: `LinkedIn 아웃리치 자동화 도구`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `월 $99, $199, $339의 유료 요금제`,
+    revenue: 720000,
+    investment: `< $500`,
+    trigger: `Mac은 앱을 만드는 데는 소질이 있었지만 무엇을 만들어야 할지 잘 몰랐습니다. 그는 친구, 비즈니스 소유자 및 경영진과 함께 머리를 맞대고 회의를 하다가 비즈니스 도구의 필요성을 금방 깨닫고 비즈니스에 영감을 얻기로 결심했습니다.`,
+    marketing: `홍보 캠페인을 통해 인지도를 높이고 데모를 진행하면서 리셀러와 만날 기회가 생겼고, 이는 비즈니스 확장을 위한 핵심 전략이 되었습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Webflow`,
+    detail_url: `https://tuemarz.notion.site/6-1-MRR-LinkedIn-f5e16b89ef8a4d73baf99dfdad79ec4e?pvs=4`
+  },
+  {
+    founder: `Adam Bryan`,
+    business: `Urban Tastebud`,
+    url: `urbantastebud.com`,
+    desc: `제휴 마케팅 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `Adam은 제휴 수수료를 통해 월 평균 최대 72%의 순이익을 올립니다.`,
+    revenue: 612000,
+    investment: `< $500`,
+    trigger: `브라이언은 글루텐 프리 메뉴 블로그를 운영하던 중 구독 박스를 발견했습니다. 최고의 글루텐 프리 정기구독 박스에 대한 그의 기사가 성공을 거두면서 틈새 시장별 정기구독 박스에 집중하게 되었습니다.`,
+    marketing: `어반 테이스트버드는 트래픽의 약 12%가 Pinterest에서 발생하며, 대부분은 Google 검색에서 발생합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2012`,
+    tools: `Ahrefs`,
+    detail_url: `https://tuemarz.notion.site/51-000-180710537b3f4efc8c3acd1d7dbd4c5a?pvs=4`
+  },
+  {
+    founder: `David Perell`,
+    business: `Write of Passage`,
+    url: `writeofpassage.school`,
+    desc: `온라인 글쓰기 학교`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `코호트 전용 액세스를 위한 4,000달러, 코호트 1개에 대한 액세스 + 3개월의 코호트 사후 지원이 포함된 5,000달러, 코호트에 평생 액세스할 수 있는 9,000달러의 세 가지 패키지를 판매하고 있습니다.`,
+    revenue: 600000,
+    investment: `N/A`,
+    trigger: `대학 시절의 GPA 점수에 낙담한 David는 Tiago Forte의 '제2의 두뇌 만들기' 강좌를 수강한 후 글쓰기에 대한 열정을 되찾았습니다. 이 강의의 노트 필기 시스템으로 무장한 David는 글쓰기에 대한 막막함이 사라졌고, 그 후 주간 뉴스레터를 시작하여 다양한 에세이를 발표했습니다.`,
+    marketing: `대다수의 사람들이 트위터에서 David를 찾습니다. 트위터는 그가 자신의 여정, 도전, 배움을 청중과 공유하는 퍼널의 최상단이라고 할 수 있는 곳입니다. 팟캐스트, 온라인 에세이 게시, 매주 두 차례 발행하는 뉴스레터는 '글쓰기'의 마케팅을 위한 또 다른 핵심 요소입니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2019`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/bf43932d05b9449e9dc71889a1eff33b?pvs=4`
+  },
+  {
+    founder: `Joel Griffith`,
+    business: `Browserless`,
+    url: `browserless.io`,
+    desc: `개발자를 위해 구축된 브라우저 자동화`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `소프트웨어 가격은 세 가지 플랜으로 나뉩니다: 무료, 월 $250, 대기업이 필요로 하는 프리미엄 플랜으로, 요구 사항에 따라 맞춤형으로 가격이 책정됩니다.`,
+    revenue: 600000,
+    investment: `< $500`,
+    trigger: `브라우저리스는 조엘이 다른 앱을 개발하던 중 우연히 발견한 기능입니다. 당시 그는 가족들이 생일과 휴일 목록을 작성할 수 있는 위시리스트 앱을 만들고 있었는데, 이를 위해서는 인터넷에 흩어져 있는 항목을 한곳에 모아야 했습니다. 개발자로서 그는 이를 쉽게 수행할 수 있는 방법을 찾지 못했고 기존 옵션은 비용이 많이 들었습니다.`,
+    marketing: `유료 검색 광고로 별다른 성과를 얻지 못한 조엘은 지원과 콘텐츠에 모든 시간을 투자했습니다. 그는 정교한 가이드 블로그를 게시하여 Google에서 트래픽이 잘 발생했습니다. 그는 스타터 스토리와의 인터뷰에서 몇 가지 블로그 사례를 언급했습니다.  브라우저리스는 조엘이 오픈소스를 유지한 덕분에 큰 주목을 받았습니다. 덕분에 사용자(대부분 개발자)는 서비스를 사용해보고 필요한지 확인할 수 있는 시간을 많이 가질 수 있었습니다. 오픈소스를 유지하면서 Joel은 매달 구독료를 지불해야 했지만, 개발자 입장에서는 고객 유지율을 높일 수 있는 좋은 방법이라고 생각합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2017`,
+    tools: `Stripe`,
+    detail_url: `https://tuemarz.notion.site/28-000-da04b504fb0a4b329623a6f054ad359a?pvs=4`
+  },
+  {
+    founder: `Gina Horkey`,
+    business: `Horkey HandBook`,
+    url: `horkeyhandbook.com`,
+    desc: `온라인 코스 비즈니스`,
+    industry: `Coaching`,
+    product: `Online courses`,
+    price: `초기 투자/약정 후 월별 구독`,
+    revenue: 588000,
+    investment: `< $500`,
+    trigger: `Gina는 개인 금융 분야에서 정규직으로 일하면서 가상 비서 부업을 시작했습니다. 그녀는 자신의 여정을 문서화했고 곧 같은 생각을 가진 사람들의 팔로워를 확보했습니다. 이를 계기로 VA 파운데이션 과정을 시작했고, 지금은 7자리 숫자의 비즈니스로 성장했습니다.`,
+    marketing: `긍정적인 고객 리뷰: 새로운 프로그램에 대한 초기 피드백을 얻기 위해 강좌에 익숙한 베타 회원을 영입한 것이 고객 확보에 도움이 되었습니다.`,
+    employees: `가상 비서`,
+    country: `USA`,
+    year: `2014`,
+    tools: `Drip`,
+    detail_url: `https://tuemarz.notion.site/58-8-03eb5e9acce141c8aa78fe827dc395e8?pvs=4`
+  },
+  {
+    founder: `Priscilla Blevins`,
+    business: `Keto Girl Nutritionist`,
+    url: `ketogirlnutritionist.com`,
+    desc: `온라인 영양사`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `고객당 $4,500 청구`,
+    revenue: 540000,
+    investment: `< $500`,
+    trigger: `의료 전문가로 일하면서 프리실라는 갑상선 불균형 환자에 대한 지원이 필요하다는 것을 알게 되었습니다. 이를 계기로 그녀는 고가의 그룹 코칭을 제공하는 가상 개인 진료 사업을 시작하게 되었습니다.`,
+    marketing: `갑상선 불균형이 있는 여성이라는 틈새 타겟층을 찾아낸 덕분에 고객의 90%가 Instagram을 통해 유입되었습니다.`,
+    employees: `1 CFO`,
+    country: `USA`,
+    year: `2019`,
+    tools: `Instagram`,
+    detail_url: `https://tuemarz.notion.site/1-5-45-000-1aef7a24159e4a33ae26d925ff5a5553?pvs=4`
+  },
+  {
+    founder: `Christopher Thomas`,
+    business: `Eli Mason`,
+    url: `elimason.com`,
+    desc: `프리미엄 칵테일 믹서`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `크리스토퍼는 홈바 키트, 믹서, 시럽, 체리, 바 도구 등을 판매하며, 9.99달러부터 시작하는 제품을 판매합니다.`,
+    revenue: 540000,
+    investment: `$6,000 - $10,000`,
+    trigger: `크리스토퍼는 현지 보틀 숍에서 이 회사의 제품에 반해 2017년에 창업자로부터 이 회사를 인수했습니다.`,
+    marketing: `가장 큰 매출 원동력은 페이스북과 인스타그램 광고와 많은 제품 리뷰였으며, 이는 이커머스 브랜드를 성장시키는 데 큰 도움이 되었습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2014`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/2-3a3b4aa4304d429e97fd4fa84b62e7c0?pvs=4`
+  },
+  {
+    founder: `Luke Van Der Veer`,
+    business: `Website Rental Coaching`,
+    url: `websiterentalcoaching.com`,
+    desc: `웹사이트 대여 사업`,
+    industry: `Coaching`,
+    product: `Marketplace`,
+    price: `일반적인 정액 수수료 범위는 타겟 틈새 시장, 도시, 리드 볼륨 및 리드 품질에 따라 월 $500에서 월 $5,000입니다.`,
+    revenue: 504000,
+    investment: `$1,000 - $5,000`,
+    trigger: `루크는 수익성 있는 부업을 찾던 중 웹사이트가 디지털 자산과 같다는 사실을 깨달았습니다. 그는 최고 순위의 리드 생성 웹사이트를 지역 비즈니스에 임대하여 매달 꾸준한 수입을 올릴 수 있었습니다.`,
+    marketing: `고객 유치는 전적으로 검색 엔진 최적화를 통해 이루어지며, 이를 통해 특정 키워드에 대해 Google에서 높은 순위를 차지할 수 있습니다. 그런 다음 이러한 리드를 포착하고 이미 리드에 대한 비용을 지불하고 있는 중소기업을 찾아 이미 유기적으로 리드를 생성하고 있는 웹사이트를 제공합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2016`,
+    tools: `Weebly`,
+    detail_url: `https://tuemarz.notion.site/4-2-8bd21edc7f514692b312170de43dc747?pvs=4`
+  },
+  {
+    founder: `Shannon Mattern`,
+    business: `Web Designer Academy`,
+    url: `shannonmattern.com`,
+    desc: `비즈니스 소유자가 웹사이트를 구축하고 마케팅할 수 있는 비디오 튜터링 플랫폼`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `섀넌은 1:1 고객 작업, 제휴 커미션, 강좌를 통해 수익을 창출합니다. WDA에서 일한 지 3년째 되던 해에 섀넌은 정규직을 그만두고 풀타임으로 일할 수 있을 만큼 수익이 6자리 숫자에 도달했습니다!`,
+    revenue: 504000,
+    investment: `< $500`,
+    trigger: `섀넌은 직장에서 공황 발작을 경험한 후 부업으로 프리랜서 웹 디자인 사업을 시작하기로 결심했습니다(실제로 자신이 좋아하는 일이었기 때문입니다). 결국 그녀는 5일 무료 웹 사이트 챌린지를 시작했고, 직장을 다니면서도 계속 반복해서 도전했습니다.`,
+    marketing: `섀넌은 관계와 협업이 가장 효과적이며, 고객 확보의 유일한 수단으로 매일 이메일 목록을 개발하고 육성합니다.`,
+    employees: `1(파트타임)`,
+    country: `USA`,
+    year: `2015`,
+    tools: `Woocommerce`,
+    detail_url: `https://tuemarz.notion.site/10-000-3669683dd6ec49d780a26d720804e6af?pvs=4`
+  },
+  {
+    founder: `Alex West`,
+    business: `CyberLeads`,
+    url: `getcyberleads.com`,
+    desc: `수백만 달러를 모금하고 아웃소싱을 모색 중인 1,000개 이상의 엄선된 기업 데이터베이스를 매월 제공합니다.`,
+    industry: `Marketing`,
+    product: `Directory`,
+    price: `한 달에 소량의 리드를 제공하는 무료 요금제, 한 달에 약 1,000개의 리드를 제공하는 스스로 해보기($297/월) 요금제, 콜드 이메일 서비스가 포함된 Done For You($2,997/월) 요금제가 있습니다.`,
+    revenue: 500000,
+    investment: `< $1,000`,
+    trigger: `한 스타트업의 개발자로 일하면서 그는 회사에 매일 새로운 요구사항이 생겨난다는 사실을 깨달았습니다. 그래서 처음에는 스타트업이 모든 유형의 요구 사항을 해결할 수 있는 도구와 서비스를 찾는 데 도움이 되는 도구 데이터베이스를 구축하는 것이 목표였습니다. 시간이 지나면서 이 솔루션은 서비스를 소개할 잠재 고객을 찾고 있는 에이전시들을 위한 제품으로 발전했습니다.`,
+    marketing: `Alex는 거의 매일 블로그에 글을 올리며 수년간 자신의 여정을 기록해 왔습니다. 가장 많은 고객을 유치하는 채널인 트위터에서도 마찬가지입니다. 또한 My First Million 팟캐스트에서 언급된 후 상당한 상승세를 보였습니다.`,
+    employees: `0`,
+    country: `Greece`,
+    year: `2020`,
+    tools: `Twitter`,
+    detail_url: `https://tuemarz.notion.site/30-1-18ac6072c7ae442b9017cad54129a2b7?pvs=4`
+  },
+  {
+    founder: `Ruiyi Chin`,
+    business: `Easlo`,
+    url: `easlo.co`,
+    desc: `크리에이터를 위한 Notion 템플릿 및 튜토리얼`,
+    industry: `Education`,
+    product: `Product`,
+    price: `Ruiyi의 주력 제품은 130달러의 세컨드 브레인 템플릿입니다. 불릿 저널과 같은 저렴한 템플릿은 20달러, 재무 트래커는 40달러입니다. 그는 이 모든 템플릿을 Gumroad를 통해 판매합니다.`,
+    revenue: 500000,
+    investment: `< $500`,
+    trigger: `루이는 현재 20살에 불과합니다. 그는 학교에서 강의 노트를 작성하는 데 노션을 사용하기 시작했고, 졸업 후 사람들이 노션을 다양한 용도로 커스터마이징할 수 있다는 사실을 깨달았습니다. 그 후 그는 프로그램의 기능을 만지작거리며 예산 추적기나 습관 추적기와 같은 기본 템플릿을 제작하고 트위터에서 홍보하기 시작했습니다.`,
+    marketing: `루이이는 팔로워를 유치하기 위해 트위터에 광고한 첫 번째 템플릿을 무료로 공유하는 것으로 시작했습니다. 또한 제품 헌트를 사용하여 제품을 알리기 시작했습니다.  현재 그의 트위터 페이지에는 29만 명이 넘는 팔로워가 있으며, 제품 헌트 페이지에는 1만 6천 명 이상의 팔로워가 있습니다. 그의 팔로워는 대부분 크리에이터와 중소기업으로, Notion을 디지털 두뇌로 활용하고자 하는 사람들입니다.`,
+    employees: `0`,
+    country: `Singapore`,
+    year: `2021`,
+    tools: `Notion`,
+    detail_url: `https://tuemarz.notion.site/Easlo-Notion-6-74f47b99e09e47879a2965c351fba9d2?pvs=4`
+  },
+  {
+    founder: `Vitaly Motuz`,
+    business: `ReviewsOnMyWebsite`,
+    url: `reviewsonmywebsite.com`,
+    desc: `평판 관리 소프트웨어`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `월 $9, $29, $59의 유료 요금제`,
+    revenue: 492000,
+    investment: `$1,000 - $5,000`,
+    trigger: `Motuz는 친구의 웹사이트에 Google 리뷰를 삽입할 위젯을 찾던 중 이 아이디어를 떠올렸습니다. 그는 많은 비즈니스 소유자가 이러한 위젯을 유용하게 사용할 수 있다는 사실을 깨닫고 수익성 있는 솔루션을 구축하는 데 자신의 리소스를 투자하기로 결정했습니다.`,
+    marketing: `무료 요금제 리뷰 위젯의 '제공처' 링크는 트래픽과 백링크를 생성하여 눈덩이 효과를 일으켰습니다. 자연 검색도 고객 유치에 도움이 되었습니다.`,
+    employees: `0(일부 파트타임 계약자 포함)`,
+    country: `Canada`,
+    year: `2017`,
+    tools: `Jira`,
+    detail_url: `https://tuemarz.notion.site/492-763e4df2518040a1ab0df80b9f534a73?pvs=4`
+  },
+  {
+    founder: `Jayne Havens`,
+    business: `Snooze Fest by Jayne Havens`,
+    url: `thesnoozefest.com`,
+    desc: `수면 코칭 사업`,
+    industry: `Coaching`,
+    product: `Agency`,
+    price: `2주 수면 컨설팅 패키지($425 상당)`,
+    revenue: 480000,
+    investment: `$1,000 - $5,000`,
+    trigger: `제인은 엄마가 되는 것에 집중하기 위해 경력을 그만두고 유아 수면 전문가가 되었습니다. 친구들을 돕기 시작하면서 더 많은 의뢰가 이어졌습니다. 그녀는 수면 컨설턴트 자격증 프로그램에 등록하고 자신의 사업을 시작하면서 취미를 직업으로 전환했습니다.`,
+    marketing: `제인에게는 네트워킹이 고객 확보에 매우 중요한 역할을 했습니다. 그녀는 페이스북 그룹을 통해 엄마들과 적극적으로 소통하며 그들을 고객으로 전환시켰습니다. 또한 영유아 수면에 대한 전문가이자 권위자로 자리매김한 덕분에 고객을 유치하고 유지하는 것이 더 쉬워졌습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Thinkific`,
+    detail_url: `https://tuemarz.notion.site/12-title-c65d7ff82eb7425583b16f1ff3fc45bf?pvs=4`
+  },
+  {
+    founder: `Jamie I.F.`,
+    business: `Increasing`,
+    url: `increasing.com`,
+    desc: `제휴 마케팅 담당자`,
+    industry: `Marketing`,
+    product: `Niche blog`,
+    price: `주로 제휴 수수료, 디스플레이 광고, 디지털 제품 판매, 브랜드의 직접 스폰서십을 통해 수익을 창출합니다.`,
+    revenue: 480000,
+    investment: `< $1,000`,
+    trigger: `제이미는 소셜 프로젝트를 진행하면서 아마존 제휴 링크의 수익원으로서의 잠재력을 깨달았습니다. 그는 틈새 웹사이트에 이러한 링크를 추가하여 프로젝트를 상업적으로 성공으로 이끌었습니다.`,
+    marketing: `항상 개선되는 SOP와 콘텐츠 제작 기술 덕분에 트래픽의 90%가 SEO를 통한 자연 검색에서 발생합니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2019`,
+    tools: `Ahrefs`,
+    detail_url: `https://tuemarz.notion.site/4-141b217603274a94b23daf0cc1c65836?pvs=4`
+  },
+  {
+    founder: `Pat Stedman`,
+    business: `Pat Stedman Dating and Relationship Coaching`,
+    url: `patstedman.com`,
+    desc: `데이트 및 관계 코치`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `리테이너당 5,200달러의 '높은 티켓'이 현재 가격 모델입니다.`,
+    revenue: 420000,
+    investment: `< $500`,
+    trigger: `그는 데이트 및 관계 문제를 겪고 있는 친구들에게 NYT 베스트셀러 책에서 얻은 매력과 유혹에 대한 귀중한 통찰력을 공유하는 것으로 시작했습니다. 자신의 전문성을 인정받은 그는 회사를 그만두고 사업을 시작했습니다.`,
+    marketing: `데이트 및 관계 문제를 이해하고 성격 차이를 인식함으로써 신뢰를 구축하여 단골 고객과 추천을 유도합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2015`,
+    tools: `MailChimp`,
+    detail_url: `https://tuemarz.notion.site/3-6d0c5f492ddf4b3d9e73150328c0ea4b?pvs=4`
+  },
+  {
+    founder: `Jure Sotosek`,
+    business: `WrumerSound`,
+    url: `wrumersound.com`,
+    desc: `자동차 액세서리 이커머스`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `기기 가격은 34,90유로입니다.`,
+    revenue: 420000,
+    investment: `$1,000 - $5,000`,
+    trigger: `중고차를 구입하는 동안 Jure는 OBD2 진단 장치를 통해 차량의 실시간 RPM 데이터에 액세스할 수 있었습니다. 이를 통해 이 데이터를 활용하여 사실적인 엔진 사운드를 생성할 수 있는 애플리케이션을 개발해야겠다는 아이디어를 얻었고, 이것이 바로 WrumerSound의 탄생으로 이어졌습니다.`,
+    marketing: `특히 틱톡, 인스타그램, 페이스북의 숏폼 콘텐츠에 중점을 둔 마케팅이 주를 이뤘습니다.`,
+    employees: `0`,
+    country: `Slovenia`,
+    year: `2022`,
+    tools: `Slack`,
+    detail_url: `https://tuemarz.notion.site/35-000-37f6e79b042a49289175dfbc7e60a78f?pvs=4`
+  },
+  {
+    founder: `Erika Kullberg`,
+    business: `Plug and Law`,
+    url: `plugandlaw.com`,
+    desc: `에리카는 변호사이자 콘텐츠 크리에이터입니다. 그녀는 유튜브 동영상, 크리에이터를 위한 온라인 강좌, 법률 상품화 서비스를 통해 수익을 창출하고 있습니다.`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `이 강좌의 가격은 497달러인 '바쁜 전문가를 위한 유튜브 마스터하기'와 바로 사용할 수 있는 법률 문서 템플릿을 판매하는 상품화 서비스는 97달러에 판매됩니다.`,
+    revenue: 366000,
+    investment: `N/A`,
+    trigger: `끔찍한 업무 일정 외에도 그녀는 변호사로서 '대기업'이 돈을 버는 것을 돕는 것을 좋아하지 않았고 변화를 일으킬 수 있기를 원했습니다.  그녀는 직장을 그만둔 후 법률 시장의 큰 격차를 메우고 법률 지식에 대한 접근성을 높이기 위해 법률 기술 회사인 Plug And Law를 설립했습니다.`,
+    marketing: `Erika는 입소문을 타는 동영상 콘텐츠를 꾸준히 제작하여 많은 시청자를 확보했습니다. 에리카는 트렌디한 주제와 상시적인 동영상의 균형을 맞춥니다. 그녀는 단 한 달 만에 5백만 명의 TikTok 팔로워를 확보했습니다.`,
+    employees: `1(파트타임)`,
+    country: `USA`,
+    year: `2019`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/3-1-500-29134d4f778a4072a2c8cfc262679d55?pvs=4`
+  },
+  {
+    founder: `Sam Dogen`,
+    business: `Financial Samurai`,
+    url: `financialsamurai.com`,
+    desc: `재정 조언 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `장당 87~97달러에 판매되는 금융 이해력 서적`,
+    revenue: 360000,
+    investment: `< $1,000`,
+    trigger: `Sam은 2009년 경제 위기 때 개인 금융 웹사이트를 시작했습니다. 한 광고주가 블로그에 광고를 게재하면 1,000달러를 주겠다고 제안했고, 그는 이를 재정 자문 블로그에 집중할 수 있는 기회로 여겼습니다.`,
+    marketing: `더 많은 콘텐츠를 작성할수록 사이트가 성장했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2009`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/13-12-cde2eb82d0124217bda8e6dd1949a356?pvs=4`
+  },
+  {
+    founder: `Oluremi Martins`,
+    business: `Natural Girl Wigs`,
+    url: `naturalgirlwigs.com`,
+    desc: `헤어 제품 브랜드`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `품질에 따라 다양한 가격대를 제공합니다.`,
+    revenue: 360000,
+    investment: `< $500`,
+    trigger: `자연스러운 질감의 가발을 좋아하던 창업자는 인스타그램 페이지에 질감 있는 모발에 대한 콘텐츠를 게시하는 아이디어를 떠올렸습니다. 제품 구매 가능 여부에 대한 문의를 받았고, 이를 통해 시장 진출 전 사업 아이디어를 검증할 수 있었습니다.`,
+    marketing: `주요 전략에는 고객 확보 및 유지를 위한 소셜 미디어 및 이메일 마케팅과 함께 바이럴 및 입소문이 포함되었습니다.`,
+    employees: `0`,
+    country: `Nigeria`,
+    year: `—`,
+    tools: `Klaviyo`,
+    detail_url: `https://tuemarz.notion.site/7-eb6ad2c99d254963be66f617cab9cead?pvs=4`
+  },
+  {
+    founder: `Ryan Schortmann`,
+    business: `Display Pros`,
+    url: `displaypros.net`,
+    desc: `디스플레이 부스 회사`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품 유형에 따라 마진을 50~60%로 유지하는 다양한 가격 책정`,
+    revenue: 360000,
+    investment: `$1,000 - $5,000`,
+    trigger: `창업자의 친구가 부스 디스플레이 디자인에 대한 도움을 요청했습니다. 최종 제품은 눈에 띄었고 다른 참가업체들의 관심을 끌었으며, 창업자는 그 잠재력을 깨닫게 되었습니다.`,
+    marketing: `링크 구축, 파트너십, 게스트 포스팅과 같은 오프페이지 오가닉 전략에 집중한 결과 웹 트래픽이 크게 증가했습니다. PPC 광고와 경쟁력 있는 가격 책정이 어느 정도 견인력을 발휘했습니다.`,
+    employees: `0 (디자인 및 마케팅 파트타임 지원)`,
+    country: `USA`,
+    year: `2018`,
+    tools: `WooCommerce`,
+    detail_url: `https://tuemarz.notion.site/3-0de7923c213e468296f583a568f78503?pvs=4`
+  },
+  {
+    founder: `Aaron Beashel`,
+    business: `Attributer`,
+    url: `attributer.io`,
+    desc: `마케팅 어트리뷰션 도구`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `사용자 수에 따른 유료 요금제는 월 $49-$399이며, 기업 사용자를 위한 맞춤형 요금제가 있습니다.`,
+    revenue: 360000,
+    investment: `$1,000 - $5,000`,
+    trigger: `B2B 마케팅 분야에서 일하던 창업자는 어떤 채널이 리드, 영업 기회, 고객으로 전환되는지 보여주는 도구를 찾을 수 없었습니다. 그래서 그는 직접 도구를 만들었고, 그 잠재력을 알아본 후 풀타임 창업가로 변신했습니다.`,
+    marketing: `창업자의 주요 시장 진출 전략은 심층적인 키워드 조사, 고품질 블로그 게시물, 게스트 포스팅 및 백링크를 통한 SEO에 중점을 두었습니다.`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2021`,
+    tools: `Bubble`,
+    detail_url: `https://tuemarz.notion.site/5-5-1233ab1d5ac7452c92d0f2cbf4525f19?pvs=4`
+  },
+  {
+    founder: `Jorden Makelle`,
+    business: `Writing Revolt`,
+    url: `writingrevolt.com`,
+    desc: `프리랜서를 위한 온라인 글쓰기 레슨`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `강좌는 $497부터 시작합니다.`,
+    revenue: 300000,
+    investment: `< $500`,
+    trigger: `해고를 당한 것이 마침내 프리랜서 글쓰기 사업을 시작하게 된 계기가 되었고, 백업 계획이 없다는 긴박감이 그녀를 성공으로 이끈 원동력이었다고 생각했습니다.`,
+    marketing: `Jordan은 매주 뉴스레터를 보내고, 대부분의 응답을 읽고 답장하며, 목록에 있는 사람들에게 코스 시작 이메일을 보냅니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2015`,
+    tools: `Teechable`,
+    detail_url: `https://tuemarz.notion.site/30-041fcfee1e4545e3a88ba345a21273e0?pvs=4`
+  },
+  {
+    founder: `Steph Gabriel`,
+    business: `OceanZen`,
+    url: `oceanzenbikini.com`,
+    desc: `수영복 브랜드`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품 가격은 $45부터 시작합니다.`,
+    revenue: 300000,
+    investment: `$1,000 - $5,000`,
+    trigger: `해양 생물에 대한 열정을 가진 창업자는 여행 중 플라스틱 쓰레기와 어망이 환경에 미치는 영향을 알게 되었습니다. 광범위한 연구를 통해 이러한 소재를 지속 가능한 방식으로 처리할 수 있는 방법을 찾았고, 폐기물로 만든 원단을 사용하는 수영복 회사를 설립했습니다.`,
+    marketing: `인쇄 간행물, 라디오 쇼, 게스트 연설은 유기적 트래픽을 유도했고, Facebook 광고와 뉴스레터는 온라인 입지를 구축했습니다.`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2014`,
+    tools: `WooCommerce`,
+    detail_url: `https://tuemarz.notion.site/1-78dcad0812e04d058ccfee640f41210d?pvs=4`
+  },
+  {
+    founder: `Nils Wessell`,
+    business: `Brooklyn Butcher Blocks`,
+    url: `brooklynbutcherblocks.com`,
+    desc: `정육점 블록`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `그의 정육점 블록의 평균 가격은 약 180달러입니다.`,
+    revenue: 300000,
+    investment: `$10,000 - $20,000`,
+    trigger: `닐스는 고급 목공예에 대한 탄탄한 배경 지식을 가지고 있었으며 도마 제작 벤처를 비롯해 새로운 프로젝트에 끊임없이 도전했습니다. 그의 제품이 뉴욕 타임즈에 소개되었을 때, 그는 자신의 아이디어에 확신을 느끼고 사업을 시작하기로 결심했습니다.`,
+    marketing: `입소문, 무역 박람회 참석 및 언론 보도. 닐스에 따르면 이런 제품에는 초기에 이벤트에 참석하는 것이 필수입니다. 그의 블록의 평균 가격은 약 180달러이므로 수작업으로 제작되고 관대한 정책, 실용적인 이점 등 무엇이 다른지 사람들에게 알리는 것이 중요합니다. 마지막으로, 비즈니스를 운영하고 생산에서 중요한 역할을 하는 사람을 직접 만나기 때문에 신뢰의 요소가 있습니다. 이 정도만 하고 나니 언론의 관심도 따라왔죠.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2010`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/30-704d1f2fd12346ac82a191fc33599d2a?pvs=4`
+  },
+  {
+    founder: `Mike Slaats`,
+    business: `Upvoty`,
+    url: `upvoty.com`,
+    desc: `사용자 피드백 도구`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `월 $15-$75 범위의 가격 책정`,
+    revenue: 300000,
+    investment: `N/A`,
+    trigger: `Mike는 회사를 위해 사용자 피드백을 수집하고 관리할 방법이 필요했습니다. 그는 저렴하면서도 좋은 도구를 찾을 수 없었기 때문에 업보티를 구축하기로 결정했습니다.`,
+    marketing: `적절한 고객 조사를 통해 창업자는 고객 리뷰에 더 관심이 많은 SaaS 비즈니스를 타겟팅할 수 있었습니다. 또한 설립자는 사용자 피드백을 기반으로 제품을 최적화하는 데 집중했습니다.`,
+    employees: `0`,
+    country: `Netherlands`,
+    year: `2019`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/669d90a842c346f18018c4dcc4378c74?pvs=4`
+  },
+  {
+    founder: `Lorena Estelle`,
+    business: `Velvety`,
+    url: `velvety.com.au`,
+    desc: `윤리적 패션 마켓플레이스`,
+    industry: `E-commerce`,
+    product: `Marketplace`,
+    price: `제품 가격은 $30부터 시작합니다.`,
+    revenue: 288000,
+    investment: `$6,000 - $10,000`,
+    trigger: `로레나는 업계의 틈새를 발견하고 가능한 한 많은 호주인에게 윤리적 패션의 개념을 소개하고 싶었습니다.`,
+    marketing: `소셜 미디어, 고객 보상을 위한 클라비요 리워드, SMS 및 뉴스레터`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2016`,
+    tools: `Aupost`,
+    detail_url: `https://tuemarz.notion.site/2-4-17d625ce81bf48c2a3e9633145af1758?pvs=4`
+  },
+  {
+    founder: `Hari Krishna Dulipudi`,
+    business: `Visa List`,
+    url: `visalist.io`,
+    desc: `비자 및 여행 정보`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `프로 구독은 $99.99부터 시작합니다.`,
+    revenue: 264000,
+    investment: `< $500`,
+    trigger: `하리는 비자 신청 절차에 여행자를 위한 원스톱 온라인 리소스가 부족하다는 사실을 깨달았습니다. 그는 모든 관련 정보를 취합하여 간소화된 형식으로 제공하기로 결정했습니다.`,
+    marketing: `트래픽의 대부분은 SEO를 통해 발생하고 나머지는 추천, 기타 소셜 미디어 및 뉴스 채널에서 발생합니다.`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2016`,
+    tools: `NuxtJS`,
+    detail_url: `https://tuemarz.notion.site/5-000-15-9d6b1a8c205843a98843039bee8f7f0a?pvs=4`
+  },
+  {
+    founder: `Michael Cassini`,
+    business: `Tcc media`,
+    url: `cannabiscactus.com`,
+    desc: `대마초 잡지`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `광고 수익`,
+    revenue: 264000,
+    investment: `$20,000 +`,
+    trigger: `의료용 마리화나 애호가인 Michael은 애리조나를 방문했다가 대마초 제품을 다루는 신뢰할 수 있는 미디어에 대한 시장의 공백을 발견했습니다. 그는 이 격차를 메우기 위해 틈새 블로그를 만들기로 결심했습니다.`,
+    marketing: `Instagram 계정을 14,000명의 팔로워로 늘리고 첫 달에 2,000건의 다운로드를 기록한 앱도 만들었습니다. 앱에서 보낸 푸시 알림은 첫 1시간 동안 평균 500회 열립니다. Instagram과 같은 소셜 미디어 계정은 대마초 콘텐츠로 인해 자주 신고를 당합니다. 이 때문에 자체 앱을 경품, 쿠폰, 뉴스, 월간 잡지/블로그 콘텐츠의 홈 페이지로 사용하고 있습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/22-000-2ee3a7a54efa473aa748a0d05ffd1fc1?pvs=4`
+  },
+  {
+    founder: `Miriam Zelinsky`,
+    business: `Lazy Jack Press`,
+    url: `lazyjackpress.com`,
+    desc: `프레피 의류 브랜드`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `Miriam은 최고 품질의 소재를 사용하더라도 사람들이 높은 가격을 꺼릴 수 있다는 사실을 깨달았기 때문에 적절한 가격을 책정하는 것이 까다로웠습니다. 하지만 그녀는 자신의 제품에 대한 믿음을 가지고 현재 이커머스 사이트에서 48달러짜리 나비넥타이부터 110달러짜리 넥타이 등 다양한 남성 의류 액세서리를 판매하고 있습니다.`,
+    revenue: 252000,
+    investment: `N/A`,
+    trigger: `예비 브랜드에 대한 아이디어는 미리엄이 로스쿨 재학 중 모교에 다니던 중 우연히 학생들이 착용하는 촌스러운 넥타이를 보고 떠올렸습니다. 유명 브랜드에서 만든 넥타이라는 사실에 충격을 받은 그녀는 몇 가지 조사를 한 후 패션에 대한 배경 지식 없이도 즉시 아이디어에 공감했습니다.`,
+    marketing: `Miriam은 Instagram을 활성화하고 제품 사진만 올리는 것이 아니라 라이프스타일 페이지로 만들어 참여를 유도합니다. 그녀가 채택한 놀라운 마케팅 방법 중 하나는 CNBC 쇼인 '억만장자'의 시즌 2에 참여하는 것이었습니다. 이를 통해 많은 단골 고객과 소셜 미디어 팔로워를 확보할 수 있었습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2012`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/21-000-d7897a04a944475cbb73fd026df8158d?pvs=4`
+  },
+  {
+    founder: `Michael Morris`,
+    business: `Pursuit of Passive Income`,
+    url: `pursuitofpassiveincome.com`,
+    desc: `수익 창출 기회 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `스폰서 게시물, 컨설팅 및 제휴 마케팅을 통해 수익을 창출합니다.`,
+    revenue: 240000,
+    investment: `< $1,000`,
+    trigger: `마이클은 소극적인 소득 창출 방법을 찾고 있던 중 우연히 블로깅을 접하고 모험을 결심했습니다.`,
+    marketing: `키워드 연구를 기반으로 기사 작성하기`,
+    employees: `0`,
+    country: `USA`,
+    year: `2021`,
+    tools: `SurferSEO`,
+    detail_url: `https://tuemarz.notion.site/2-709aaa23ade14faab1e214661ba95dfb?pvs=4`
+  },
+  {
+    founder: `Debbie Gartner`,
+    business: `The Flooring Girl`,
+    url: `theflooringgirl.com`,
+    desc: `홈 데코 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `광고 수익 및 제휴 프로그램`,
+    revenue: 240000,
+    investment: `< $500`,
+    trigger: `Debbie는 바닥재 매장을 위한 마케팅 도구로 블로그를 시작했습니다.`,
+    marketing: `SEO(검색 엔진 최적화)가 성공의 열쇠였습니다. SEO 노력을 통해 Debbie는 매월 400,000건의 페이지뷰를 달성하고 있으며, 이는 수익의 대부분을 창출하는 원동력입니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2011`,
+    tools: `Teechable`,
+    detail_url: `https://tuemarz.notion.site/2-title-6a82b71531a94c32b028172f5f1e6468?pvs=4`
+  },
+  {
+    founder: `Carrie Forrest`,
+    business: `Clean Eating Kitchen`,
+    url: `cleaneatingkitchen.com`,
+    desc: `식품 및 웰빙 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `광고, 스폰서 게시물 및 제휴사 수입`,
+    revenue: 240000,
+    investment: `$1,000 - $5,000`,
+    trigger: `캐리는 비건 식단을 실험하고 온라인 커뮤니티에서 연결고리를 찾던 중 비즈니스 아이디어를 개발했습니다.`,
+    marketing: `SEO를 사용하여 키워드 순위를 높이고 교육 배경과 전문 지식을 활용하여 다른 음식 블로거와 차별화했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2009`,
+    tools: `RankIQ`,
+    detail_url: `https://tuemarz.notion.site/20-123ca8b53afe4ad4b46d815826235c4c?pvs=4`
+  },
+  {
+    founder: `Steve Christensen`,
+    business: `NOVO watch`,
+    url: `novowatch.com`,
+    desc: `재생 소재를 사용한 수제 시계`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `Steve는 자신의 Shopify 스토어에서 시계를 판매하며, 가격은 $1892.00부터 시작합니다.`,
+    revenue: 240000,
+    investment: `$1,000 - $5,000`,
+    trigger: `어린 시절부터 시계를 좋아했던 스티브는 사업가로서 시계 세계에 뛰어들기로 결심했습니다. 그는 계속해서 재료를 재활용하여 시계를 만들었고 결국 자신의 가게를 열었습니다.`,
+    marketing: `Steve는 자신의 브랜드에 고객을 유치하고 유지하는 가장 좋은 방법은 스토리라는 것을 알게 되었습니다. 그는 매우 수준 높은 동영상을 제작하여 YouTube에 업로드합니다. 또한 매일 트윗을 하고, 인스타그램과 페이스북에 블로그와 사진을 공유하며, 매주 이메일을 발송합니다.`,
+    employees: `0`,
+    country: `Canada`,
+    year: `2011`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/f24263847f574fcab3009fe6f04c86db`
+  },
+  {
+    founder: `Brittany Taylor`,
+    business: `Black Luxe Candle Co.`,
+    url: `blackluxecandles.com`,
+    desc: `럭셔리 캔들 제조업체`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `양초 1개에 $9, 양초 3개에 $20의 비용이 듭니다.`,
+    revenue: 240000,
+    investment: `$1,000 - $5,000`,
+    trigger: `브리트니는 가족에게 선물하는 것에 관심이 많았기 때문에 실제 선물을 사는 대신 양초를 만들기 시작했습니다. 온라인에 자신이 만든 양초 사진을 올린 후, 양초를 어떻게 구매할 수 있는지 궁금해하는 사람들의 문의를 받았습니다. 고민 끝에 그녀는 취미를 사업으로 전환하기로 결심했습니다.`,
+    marketing: `브리트니는 무역 박람회에 참석하고 고객에게 양초 향을 맡게 하는 등 고객 서비스와 독특한 제품 프레젠테이션을 위해 노력한 결과 소셜 미디어에서 충성도가 높은 팔로워를 확보하고 고객을 전환하는 데 성공할 수 있었습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2019`,
+    tools: `Klaviyo`,
+    detail_url: `https://tuemarz.notion.site/12-000-title-5fc0649fc51749ad8a4dd88c421cf8eb?pvs=4`
+  },
+  {
+    founder: `Rilee Acrey`,
+    business: `BalloonWorks`,
+    url: `myballoonworks.com`,
+    desc: `풍선 스타일리스트`,
+    industry: `E-commerce`,
+    product: `Services`,
+    price: `29부터 시작하는 코스`,
+    revenue: 240000,
+    investment: `< $500`,
+    trigger: `릴리는 친구의 성별 공개 파티에 풍선을 사용하여 흥을 돋우는 임무를 맡았습니다. 이 기회를 통해 킴 카다시안이 소셜 미디어에 소개하면서 자신감을 키우고 자신의 비전을 검증받았습니다.`,
+    marketing: `사업을 시작하기 위해 Rilee는 찾을 수 있는 모든 이벤트 기획자에게 전화를 걸어 귀 기울여주는 사람이라면 누구에게나 BalloonWorks를 설명했습니다. 다른 어떤 업계보다 시각적인 요소가 강한 그녀의 작업은 인스타그램을 가장 큰 마케팅 채널이자 고객의 90%를 확보하는 채널로 만들었습니다. 처음 5개월 동안은 입소문과 잘 배치된 경품 이벤트, 그리고 Pacific Organic Pops 및 Picnic Collective와 같은 회사와의 파트너십을 통해 유기적으로 성장했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2019`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/7-5-5cbc65da70314706b5844086461a7ff3?pvs=4`
+  },
+  {
+    founder: `Nick Disabato`,
+    business: `Draft`,
+    url: `draft.nu`,
+    desc: `디자인 컨설팅 사업`,
+    industry: `Marketing`,
+    product: `Online courses`,
+    price: `Nick은 월 $30 또는 연간 $300의 프리미엄 회원을 위한 멤버십 액세스를 설정했습니다. 단권 도서 및/또는 강좌 구매에 관심이 있는 사용자는 Draft 사이트에서 $8 + 배송비부터 $50 + 배송비까지 다양한 가격으로 구매할 수 있습니다.
 
-        // Build Table rows and control Pagination buttons
-        function updateTableUI() {
-            const tableBody = document.getElementById('data-table-body');
-            const emptyState = document.getElementById('empty-state');
-            tableBody.innerHTML = '';
+Nick의 또 다른 수익원은 고객의 자료 디자인과 사용자 흐름을 개선하기 위한 1:1 20분 스크린캐스트와 후속 통화입니다.`,
+    revenue: 216000,
+    investment: `N/A`,
+    trigger: `처음부터 UX 디자인에 열정적이었던 Nick은 이 업계에 취직할 수 없었습니다. 그는 UI UX를 시작하는 방법에 대한 책을 집필하는 것으로 시작하여 2008년에 킥스타터에서 1만 달러 이상을 모금하며 초기 히트 프로젝트 중 하나가 되었습니다. 5년 후, 닉은 UX 직장을 한 달간 쉬면서 책을 썼던 것처럼 독립적으로 계속 일하기로 결심했고, 10년이 지난 지금까지도 온전히 자신의 힘으로 회사를 운영하고 있는 Draft를 설립했습니다.`,
+    marketing: `킥스타터에서 초기 성공을 거둔 후, Nick은 트위터를 통해 디자인 애호가들의 관심을 유도하여 현재 2900명이 넘는 비공개 팔로워를 확보했습니다. 또한 비공개 커뮤니티를 운영하며 메일링 리스트를 통해 모든 사람과 소통하고 있습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2012`,
+    tools: `Stripe`,
+    detail_url: `https://tuemarz.notion.site/18-000-7274ea5eeebb468ba54dba75ff29f55c?pvs=4`
+  },
+  {
+    founder: `Brett Burdick`,
+    business: `Brex International, LLC`,
+    url: `featherboards.com`,
+    desc: `목공 액세서리`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품 가격은 $40부터 시작합니다.`,
+    revenue: 216000,
+    investment: `$20,000 +`,
+    trigger: `목공에 대한 브렛의 열정은 번거로운 기존 페더보드 대신 사용하기 쉽고 효과적인 대안을 디자인하는 데 영감을 주었습니다.`,
+    marketing: `목공 및 DIY 커뮤니티가 활발하고 서로를 지지해 주기 때문에 Instagram은 훌륭한 리소스입니다. 브렛의 고객들은 종종 자신의 가게에서 제품을 실제로 사용하는 사진과 동영상을 게시하고 브렛은 이를 다시 게시하고 참여합니다. 그가 고슴도치를 홍보하기 위해 가장 영향력 있게 한 일은 인플루언서에게 여러 대를 나눠준 것이었습니다. 대형 주류 인플루언서들은 제품을 보여주기 위해 상당한 비용을 지불하지만, 그는 사람들에게 제품을 보내고 마음에 들면 사용해 달라고 요청했습니다. 많은 인플루언서들이 이 제품을 사용했고, 이제는 관련 없는 게시물에도 가끔 등장합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2016`,
+    tools: `WooCommerce`,
+    detail_url: `https://tuemarz.notion.site/1-8-e1aecfdf98ff4e29a07cbe6ba6df19f3?pvs=4`
+  },
+  {
+    founder: `Manuel Frigerio`,
+    business: `ReferralHero`,
+    url: `referralhero.com`,
+    desc: `온라인 추천 프로그램`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `이 플랫폼은 월 $69, 월 $169, 월 $299의 세 가지 요금제를 제공합니다.`,
+    revenue: 216000,
+    investment: `N/A`,
+    trigger: `마누엘은 분석 회사에서 일하던 중 추천 프로그램으로 화제가 되고 있는 다른 스타트업을 발견했습니다. 그는 빠른 MVP를 개발하여 12~18개월 동안 부업으로 운영했습니다.`,
+    marketing: `콘텐츠 마케팅과 SEO는 Manuel이 고객을 유치하는 가장 좋은 방법이며, 첫날에 작성된 기사는 4년이 지난 지금도 여전히 순위를 유지하고 있습니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2018`,
+    tools: `Zapier`,
+    detail_url: `https://tuemarz.notion.site/18-000-title-85664b83092545b396da158467cea87f?pvs=4`
+  },
+  {
+    founder: `John Wilker`,
+    business: `The Simple Biz`,
+    url: `thesimplestbizforu.com`,
+    desc: `팔레트 재활용 사업`,
+    industry: `Education`,
+    product: `Services`,
+    price: `John은 팔레트당 8달러를 받고 하루에 약 150개의 팔레트를 운송합니다. 한 시간도 채 되지 않는 작업으로 1,200달러를 벌고 있습니다. 그는 또한 이 사업을 시작하려는 사람들을 위해 14개 모듈로 구성된 교육 과정도 판매하고 있습니다.`,
+    revenue: 216000,
+    investment: `< $500`,
+    trigger: `1998년 존스의 전 사업 파트너가 팔레트를 수거해 판매하자는 아이디어를 제안했습니다. 8블록 떨어진 곳에서 팔레트를 수거하는 곳을 찾았고 팔레트 2000개를 무료로 제공받았습니다. 당시 팔레트 야적장에서는 팔레트당 약 2달러를 받았습니다. 그 후 그는 팔레트 야적장에 파는 것보다 실제 구매자를 찾으면 수익을 극대화할 수 있다는 것을 깨달았습니다.`,
+    marketing: `처음에 John은 일주일 동안 하루에 약 40개의 비즈니스에 연락하여 12개의 공급업체와 6개의 구매자를 확보했습니다. 그는 여전히 관계를 구축하고 유지하기 위해 구식 방법에 의존하고 있으며 대부분의 구매자는 오늘날에도 여전히 그들과 함께하고 있습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `1998`,
+    tools: `Aweber`,
+    detail_url: `https://tuemarz.notion.site/0-21-6-7c8195e3da8446eead4075f28b95a25f?pvs=4`
+  },
+  {
+    founder: `Christian Tuskes`,
+    business: `Dilly Dally Games`,
+    url: `dillydallygames.com`,
+    desc: `온라인 아케이드 게임 회사`,
+    industry: `Media`,
+    product: `Product`,
+    price: `Christian은 처음에는 유료 앱으로 시작했다가 결국 부분 유료화 모델로 전환했습니다. 그 결과 평범한 성공을 거둔 후, 현재는 광고가 지원되는 무료 버전으로 일부 추가 기능을 IAP(인앱 구매)로 제공하고 있습니다.`,
+    revenue: 198000,
+    investment: `< $500`,
+    trigger: `이 게임 개발은 컴퓨터 공학 석사 학위를 위한 프로젝트로 시작되었으며, 소프트웨어 라이선스를 이베이에서 판매하고 CD를 통해 게임을 배송할 예정이었습니다.`,
+    marketing: `Christian이 가장 많이 사용하는 고객 확보 채널은 직접 검색과 자연 검색입니다. 그는 이전에 페이스북 광고에 많은 투자를 했지만 지속 가능하지 않았기 때문에 콘텐츠 마케팅/글쓰기에 중점을 둔 SEO를 도입하기로 결정했습니다.`,
+    employees: `0 (SEO 작성은 프리랜서에게 아웃소싱)`,
+    country: `USA`,
+    year: `2007`,
+    tools: `Trello`,
+    detail_url: `https://tuemarz.notion.site/16-000-021402f53dd44f34a2fb2ee5a7fc17d6?pvs=4`
+  },
+  {
+    founder: `Scott Daigger`,
+    business: `Buddy Web Design & Development`,
+    url: `buddywdd.com`,
+    desc: `웹사이트 디자인 및 개발`,
+    industry: `E-commerce`,
+    product: `Agency`,
+    price: `5~10만 달러 범위의 가격`,
+    revenue: 180000,
+    investment: `N/A`,
+    trigger: `경력 전환에 관심이 많았던 Scott은 소프트웨어 개발 업계에서 더 많은 커리어 기회를 얻기 위해 코딩을 배우기 시작했습니다. 교육을 받은 후 그는 Upwork에 프리랜서 프로필을 작성하고 몇 가지 프로젝트를 확보했습니다. 다행히도 프리랜서로 일하면서 버디 웹 디자인 & 개발의 발전과 성장으로 이어졌습니다.`,
+    marketing: `설립자는 인바운드 리드를 유치하기 위해 SEO에 많은 노력을 기울였습니다. 또한 잠재 고객이 웹사이트를 필요로 할 때 가장 먼저 떠오를 수 있도록 다양한 소셜 미디어 플랫폼을 통해 관계를 구축하고 자신의 이름과 포트폴리오를 알리는 데 열중하고 있습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: ``,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/6-6974000831b9496eb684fa0de0ae24d8?pvs=4`
+  },
+  {
+    founder: `Claire Osborne`,
+    business: `The Mindset Society`,
+    url: `instagram.com/mindset_claire`,
+    desc: `코칭 비즈니스`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `세션 기반 요금 모델`,
+    revenue: 180000,
+    investment: `$1,000 - $5,000`,
+    trigger: `클레어는 영국의 코로나19 봉쇄 기간 동안 많은 고용주가 직원들의 정신 건강을 지원하는 데 어려움을 겪고 있다는 사실을 알게 되었습니다. 이를 계기로 개인적, 직업적 어려움을 겪는 개인을 돕기 위한 맞춤형 정신 건강 코칭 서비스를 만들게 되었습니다.`,
+    marketing: `기존 네트워크 인맥과 입소문 추천을 활용합니다. 그녀는 광고나 다른 전략에 시간과 돈을 들이기보다는 초기 고객에게 우수한 서비스를 제공하는 데 집중합니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2010`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/15-000-1f46acf81d7740f8b1b21e124d4e2ed1?pvs=4`
+  },
+  {
+    founder: `Maarten`,
+    business: `Studio Wombat`,
+    url: `tudiowombat.com`,
+    desc: `플러그인 마켓플레이스`,
+    industry: `E-commerce`,
+    product: `Marketplace`,
+    price: `각 플러그인의 연간 비용은 약 &49입니다.`,
+    revenue: 180000,
+    investment: `N/A`,
+    trigger: `Maarten은 주로 WooCommerce의 작동 방식에 대해 자세히 알아보기 위해 플러그인을 만들기 시작했는데, 놀랍게도 사람들이 관심을 보였습니다. 그때 그는 스튜디오 웜뱃에서 판매하기로 결심했습니다.`,
+    marketing: `워드프레스 플러그인 저장소에 플러그인을 업로드하고 각 플러그인에는 워드프레스 검색 알고리즘이 검색 결과에서 플러그인의 순위를 매길 때 고려하는 부분인 readme 파일이 포함되어 있는지 확인합니다. 창업자는 리드미에 키워드를 추가하여 순위를 매기고 더 많은 고객을 유치할 수 있습니다.`,
+    employees: `0`,
+    country: `Belgium`,
+    year: `2017`,
+    tools: `Slack`,
+    detail_url: `https://tuemarz.notion.site/15-000-b8d2abd23dcd4291bd2ad9db16bede81?pvs=4`
+  },
+  {
+    founder: `Leslie Eisen`,
+    business: `Almond Clear`,
+    url: `almondclear.com`,
+    desc: `스킨 케어 제품 사업`,
+    industry: `E-commerce`,
+    product: `Marketplace`,
+    price: `제품 가격은 $30부터 시작합니다.`,
+    revenue: 180000,
+    investment: `< $500`,
+    trigger: `레슬리는 20년 동안 몸에 붉은 돌기가 생겨 고생하고 있었습니다. 그녀는 여러 피부과를 방문했지만 문제가 지속되었습니다. 그러던 어느 날, 그녀는 만델산을 추천하는 에스테틱 의사를 방문하기로 결심했습니다. 만델산을 사용한 지 3주 만에 트러블이 사라졌고 그녀는 큰 안도감을 느꼈습니다. 이 경험을 계기로 그녀는 자신의 발견을 다른 사람들과 공유할 수 있도록 사업을 시작하기로 결심했습니다.`,
+    marketing: `아마존에서는 스폰서 제품 광고를 사용하여 신규 고객을 매우 쉽게 유치할 수 있습니다. 제품이 긍정적인 평가를 받으면 스스로 마케팅을 시작합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2017`,
+    tools: `MailChimp`,
+    detail_url: `https://tuemarz.notion.site/87380b11a2da4b389004c34b718699da?pvs=4`
+  },
+  {
+    founder: `Harry Dry`,
+    business: `Marketing Examples`,
+    url: `marketingexamples.com`,
+    desc: `성공적인 기업의 실제 마케팅 사례 갤러리`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `Harry의 뉴스레터는 한 달에 두 번 발송되며 7,500달러에 후원 패키지를 제공합니다.`,
+    revenue: 180000,
+    investment: `N/A`,
+    trigger: `해리는 어떤 일을 할지 결정하기 위해 꽤 이성적으로 접근하여 현재 상황, 목표, 기술 등을 방정식에 넣었습니다. 그 결과 그는 마케팅을 좋아했고, 마케팅에 대해 글을 쓸 수 있는 적절한 여가 시간이 있었으며, 이 주제에 대해 읽은 대부분의 콘텐츠가 수준 이하였다는 사실을 알게 되었습니다.`,
+    marketing: `Harry는 뛰어난 콘텐츠를 제작하는 것 외에도 콘텐츠 배포 시스템을 구축했습니다. 그는 각 뉴스레터마다 기사에서 가장 유용한 팁을 하나씩 트위터, LinkedIn, 15~20개의 Facebook 그룹, 5~10개의 Slack 그룹, Instagram 및 Indie Hackers에 게시합니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2019`,
+    tools: `Sendgrid`,
+    detail_url: `https://tuemarz.notion.site/13-163874fd098744fb99d6178f51531742?pvs=4`
+  },
+  {
+    founder: `Eman Bachani`,
+    business: `Meraki Design House`,
+    url: `merakidesignhouse.com`,
+    desc: `수제 신발 이커머스`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품 가격은 $45부터 시작합니다.`,
+    revenue: 180000,
+    investment: `$1,000 - $5,000`,
+    trigger: `Eman은 자신의 정교한 수제화가 종종 인도에서 영감을 받은 디자인에 대한 호기심과 질문을 불러일으킨다는 사실을 알게 되었습니다. 수제 구두의 독특함과 착용자의 발자국을 담을 수 있는 능력에 대한 감사와 다른 많은 사람들도 이러한 특성을 소중히 여길 것이라는 본능에 이끌려 Meraki를 시작하게 되었습니다.`,
+    marketing: `인플루언서 마케팅: 다양한 인구통계학적 세그먼트에 맞는 인플루언서에게 제품을 보내 고객을 확보할 수 있었습니다.`,
+    employees: `0`,
+    country: `Canada`,
+    year: `2018`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/1-5-23c433ede37b43159ec948ba67cab8ff?pvs=4`
+  },
+  {
+    founder: `Rebecca Ringquist`,
+    business: `Dropcloth Samplers`,
+    url: `dropclothsamplers.com`,
+    desc: `손으로 그린 자수 샘플러`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `자수 샘플러 가격은 $14부터 시작합니다.`,
+    revenue: 180000,
+    investment: `N/A`,
+    trigger: `레베카는 시카고에서 자수 및 직물 입문 수업을 가르치면서 샘플러를 만들기 시작했습니다. 패브릭 숍에서 판매할 디자인 구매를 문의하기 시작하면서 사업 가능성을 깨달았습니다.`,
+    marketing: `인스타그램에 제품을 게시한 덕분에 비즈니스가 크게 성장했습니다. 또한 스케치북, 진행 중인 바느질 프로젝트 등 자수 사업과 관련된 아이템의 사진도 게시합니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2011`,
+    tools: `Etsy`,
+    detail_url: `https://tuemarz.notion.site/15-000-b4839b04c922407789955d691ccb5108?pvs=4`
+  },
+  {
+    founder: `Erin Hornyak`,
+    business: `navyBLEU`,
+    url: `shopnavybleu.com`,
+    desc: `온라인 부티크`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품 가격은 $40부터 시작합니다.`,
+    revenue: 180000,
+    investment: `$10,000 - $20,000`,
+    trigger: `에린은 인스타그램에서 영감을 얻어 네이비 컬러 아이템을 판매하는 온라인 스토어를 시작했습니다. 배우자도 그녀의 아이디어를 지지했습니다.`,
+    marketing: `에린은 네이비블루를 사랑하는 인플루언서들과 협업하여 네이비블루 제품을 홍보합니다. 또한 홍보 대행사를 통해 언론에 자신의 스토리를 홍보하고 있으며, Insta의 쇼핑 기능을 설정하고 있습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2019`,
+    tools: ``,
+    detail_url: `https://tuemarz.notion.site/15-000-028358ce5556402686467de46e586fb2?pvs=4`
+  },
+  {
+    founder: `Jasper Cyan`,
+    business: `Plasfy`,
+    url: `plasfy.com`,
+    desc: `그래픽 디자인 소프트웨어`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `제품 가격에는 0달러의 무료 평가판 옵션, 월 9달러의 스타터 요금제, 월 12달러의 프로페셔널 요금제가 있습니다.`,
+    revenue: 180000,
+    investment: `< $500`,
+    trigger: `혁신적인 그래픽 디자인 소프트웨어인 Plasfy의 아이디어는 그래픽 디자이너들이 시장에서 충족되지 않은 요구와 불만을 인식하는 데서 나왔습니다.`,
+    marketing: `재스퍼는 비즈니스 성장을 위해 다양한 활동을 병행합니다:  - 주요 마켓플레이스 및 웹사이트와 파트너십을 맺고 수익 공유 모델을 운영합니다. 타겟 고객층에 맞는 마켓플레이스 및 웹사이트와 제휴를 맺어 적절한 사람들에게 제품을 홍보할 수 있었습니다. 이러한 타겟 노출을 통해 전환율이 크게 향상되었습니다.  - 경품 프로모션 SAAS를 주제로 한 Facebook 그룹과 제휴하여 흥미로운 경품 프로모션을 진행했습니다. 이러한 커뮤니티와 협력하여 사용자가 플랫폼을 사용해 본다는 조건으로 한정된 수의 Plasfy Professional 계정을 무료로 제공한 것은 흥미로운 경험이었습니다. 예상보다 훨씬 효과가 좋았습니다.  - 기존 고객이 친구나 동료를 추천하도록 장려하는 추천 프로그램. 입소문 마케팅의 힘을 활용하기 위해 성공적인 추천에 대해 40%의 커미션을 제공했습니다. 하지만 이 특별한 접근 방식은 그가 기대했던 결과를 얻지 못했습니다. 사용자들이 플랫폼에 대한 만족도는 높지만 효과적으로 판매하고 홍보할 수 있는 마케팅 전문 지식이 부족하다는 사실이 분명해졌습니다. 그래서 그는 추천 프로그램을 제휴 프로그램으로 전환했습니다. 이 결정은 제휴 프로그램이 뛰어난 성과를 거두기 시작하면서 판도를 바꾸는 계기가 되었습니다.  - 무료 평가판. 처음에는 공짜만 찾는 고객을 확보하는 데 따른 잠재적 비용에 대한 우려로 7일간의 제한적인 무료 체험을 제공했습니다. 하지만 효과가 없었습니다. 이에 적응하기 위해 Jasper는 과감하게 평생 무료 계정 옵션으로 전환하여 신용카드 정보 요구 사항을 완전히 없앴습니다. 이러한 전략적 전환은 판도를 바꾸어 가입 전환이 500%나 증가하는 놀라운 결과를 가져왔습니다.  Translated with www.DeepL.com/Translator (free version)`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2022`,
+    tools: `WooCommerce`,
+    detail_url: `https://tuemarz.notion.site/18-587bd9fc4d6d43c394955054e7c0f2e4?pvs=4`
+  },
+  {
+    founder: `Elise Phillips`,
+    business: `Coco & Bubbles Candle Company`,
+    url: `etsy.com/shop/CocoandBubbles`,
+    desc: `소이 왁스 캔들 제조업체`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품당 $25부터 시작`,
+    revenue: 168000,
+    investment: `$1,000 - $5,000`,
+    trigger: `Elise는 향초 사업을 시작하기 위해 직장을 그만두었습니다. 그녀는 코코 앤 버블즈라는 적합한 사업명을 찾았고, 폐업한 사업장을 3천 달러에 인수했습니다. 재출시한 지 하루 만에 2,000달러가 넘는 도매 주문을 받아 큰 자신감을 얻게 되었습니다.`,
+    marketing: `판매의 대부분은 이메일 마케팅을 통해 이루어지며, Faire.com, Wayfair, Amazon과 같은 다른 마켓플레이스를 통해 오프사이트에서 이루어집니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2019`,
+    tools: `MOZ`,
+    detail_url: `https://tuemarz.notion.site/3-000-14-000-1992b0e0a8fd4fe8a0c38a2d309f5d7e?pvs=4`
+  },
+  {
+    founder: `Alexander Isora`,
+    business: `Unicorn Platform`,
+    url: `unicornplatform.com`,
+    desc: `랜딩 페이지 빌더`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `이 빌더의 정기 구독 요금은 월 $8, 월 $18입니다. 사용자가 소프트웨어를 사용해 볼 수 있는 무료 플랜도 있습니다.`,
+    revenue: 168000,
+    investment: `< $500`,
+    trigger: `다양한 기술 프로젝트를 구축한 경험과 웹 개발 회사의 전직 창업자인 알렉산더는 사용자가 좋은 랜딩 페이지를 만드는 데 어려움을 겪는 것을 보고 자신의 기술과 경험을 적용하여 쉬운 빌더를 만들었습니다!`,
+    marketing: `알렉산더는 Product Hunt에서 MVP를 시작했으며, 그 이후로 뛰어난 고객 지원에만 집중하고 있습니다. 그는 마케팅 활동을 수행할 시간이 없습니다.`,
+    employees: `2`,
+    country: `USA`,
+    year: `2018`,
+    tools: `Product Hunt`,
+    detail_url: `https://tuemarz.notion.site/250-2f9e99ada3d44b0da6af970e662749b5?pvs=4`
+  },
+  {
+    founder: `David Bressler`,
+    business: `Excelformulabot`,
+    url: `formulabot.com`,
+    desc: `AI 기반 텍스트 엑셀 수식 소프트웨어`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `David는 세 가지 요금제를 설정했습니다: 영원히 무료인 기본 요금제, 연간 84달러의 프리미엄 요금제, 추가 할인이 적용되는 연간 75달러의 비즈니스 요금제입니다.`,
+    revenue: 168000,
+    investment: `< $500`,
+    trigger: `육아휴직 중 AI를 접한 David는 OpenAI 엑셀 공식에 질문을 던지기 시작했습니다. 데이터 및 분석 업무를 담당하고 있는 그에게 Excel은 널리 사용되는 도구였습니다. 질문을 더 어렵게 만들수록 AI의 정확도는 계속 떨어졌고, 인터넷에서 이를 바로잡을 수 있는 솔루션을 찾을 수 없자 그는 뭔가 특별한 것을 개발해야겠다고 생각했습니다.`,
+    marketing: `David는 TikTok의 크리에이터 마켓플레이스를 사용하여 사이트를 홍보하기에 적합한 인플루언서를 찾아냈습니다. 초기에 많은 관심을 끌었던 것은 TikTok 인플루언서들이 이 사이트에 대해 \\"알면 불법으로 느껴지는 웹사이트\\"라고 이야기한 덕분이었습니다.  SEO는 사이트의 또 다른 초점이었으며, 'Excel AI 생성기' 및 '엑셀 공식 생성기'와 같은 키워드로 수천 건의 검색을 유도했습니다. David는 또한 'VLOOKUP' 및 'SUMIFS'와 같은 특정 공식을 검색하는 사람들을 중심으로 콘텐츠 페이지를 구축해 왔습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2022`,
+    tools: `Bubble`,
+    detail_url: `https://tuemarz.notion.site/14-000-MRR-AI-Excel-SaaS-edfeba5f3ef1464dbb735c00ef7e827d?pvs=4`
+  },
+  {
+    founder: `Sireesha Narumanchi`,
+    business: `Crowd Work News`,
+    url: `crowdworknews.com`,
+    desc: `온라인 원격 근무 블로그`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `Sireesha는 제휴 마케팅과 디스플레이 광고를 통해 블로그에서 수익을 창출하고 있으며, 현재 사이트 트래픽은 한 달에 25만 페이지 뷰에 달합니다.`,
+    revenue: 156000,
+    investment: `< $500`,
+    trigger: `원격 근무 블로그를 시작하는 것은 (원격 근무 일자리를 찾던 중) 시레샤에게 골칫거리인 동시에 소극적인 수입을 얻을 수 있는 방법이었습니다.`,
+    marketing: `이메일 마케팅은 독자를 사이트로 끌어들이는 강력한 방법이었으며, 올바른 키워드 연구와 온페이지 및 오프페이지 SEO에 중점을 둔 SEO는 그 다음 단계입니다.`,
+    employees: `0`,
+    country: `Australia`,
+    year: `2016`,
+    tools: `N/A`,
+    detail_url: `https://tuemarz.notion.site/13-000-f670316d7e534b4fa2e0f6b1be8efa32?pvs=4`
+  },
+  {
+    founder: `Ruth Daro`,
+    business: `Seniman Calligraphy`,
+    url: `senimancalligraphy.com`,
+    desc: `맞춤형 문구 디자인 스튜디오`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `18부터 시작하는 디자인`,
+    revenue: 156000,
+    investment: `< $500`,
+    trigger: `루스는 특히 선물을 주고받는 것을 좋아하는 명절에 손으로 무언가를 만드는 것에 열정을 가졌습니다. 취미로 현대 캘리그라피를 배우기 시작했고, 곧 맞춤형 맞춤 청첩장을 만들면서 자신이 좋아하는 모든 것을 결합할 수 있다는 것을 알게 되었습니다. 3개월 동안 꾸준히 연습한 결과, 그녀는 자신의 실력이 다른 사람들을 위해 캘리그라피 작업을 할 수 있을 만큼 충분하다고 판단하여 사업을 시작하게 되었습니다.`,
+    marketing: `창업자는 사업 첫해에 포트폴리오를 구축하는 데 시간을 보냈습니다. 여기에는 Instagram과 웹사이트에 사용할 콘텐츠를 만들기 위해 무료 카드 디자인을 제공하는 것이 포함되었습니다. 그녀는 Instagram에서 다른 캘리그래퍼와 웨딩 전문가들에게 연락을 취했고, 이러한 초기 대화는 결국 비즈니스 관계로 이어졌습니다. 얼마 지나지 않아 그녀는 스타일링된 사진 촬영에 대한 문의를 받기 시작했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2015`,
+    tools: `Instagram`,
+    detail_url: `https://tuemarz.notion.site/13-000-11a24037e60a4dba90c9899a5937c515?pvs=4`
+  },
+  {
+    founder: `Steven Snell`,
+    business: `Vandelay Design`,
+    url: `vandelaydesign.com`,
+    desc: `웹 디자인 블로그 웹사이트`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `스티븐은 멤버십을 통해 사이트에서 디자인 영감, 글꼴, 색상 팔레트를 무료로 판매합니다. 또한 배너 광고로 BuySellAds를 통해 수익을 얻었으며, 현재 제휴사는 그에게 가장 큰 수익 창출원입니다.`,
+    revenue: 150000,
+    investment: `< $500`,
+    trigger: `스티븐은 웹 사이트 제작을 좋아했고, 풀타임 재무 업무를 마치고 남는 시간에 부수입을 올릴 방법을 찾고 있었기 때문에 반드레이 디자인을 시작했습니다. 그는 웹 사이트를 만들고 제휴 마케팅을 위해 설정할 수 있다는 가능성에 정말 흥미를 느꼈습니다.`,
+    marketing: `Steven은 사이트에 1000개가 넘는 블로그(!)를 작성했으며, 디자인 환경이 계속 변화함에 따라 모든 블로그를 정기적으로 업데이트하고 있습니다. 그는 오래된 블로그를 개선하고 새로운 콘텐츠를 계속 작성하는 동시에 가장 성과가 좋은 게시물을 파악하는 데 주력하고 있습니다. \\"사진작가를 위한 워드프레스 테마 모음\\"과 같은 블로그는 반델레이 디자인 트래픽의 최고 히트작이었으며, 그 부산물로 스티븐의 제휴 수익이 증가했습니다.`,
+    employees: `0(일부 글 기여자 포함)`,
+    country: `USA`,
+    year: `2007`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/5-f5da8dfa6e18480880aeff1d69d05270?pvs=4`
+  },
+  {
+    founder: `Valentin Decker`,
+    business: `Sauce Writing`,
+    url: `saucewriting.com`,
+    desc: `커리어를 가속화할 수 있는 온라인 글쓰기 학교`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `발렌틴은 1,400달러의 8주 액셀러레이터 프로그램과 450달러의 글쓰기 주말 휴가를 제공합니다. 소스 글쓰기는 매년 100명 이상의 학생들에게 도움을 주고 있습니다.`,
+    revenue: 150000,
+    investment: `N/A`,
+    trigger: `그는 마케팅 부서에서 첫 직장을 얻었을 때 글쓰기의 잠재력을 깨달았습니다. 그의 임무는 카피라이팅에 대해 할 수 있는 모든 것을 배우는 것이었습니다. 이와 동시에 그는 개인 블로그를 만들어 상당한 팔로워를 확보했습니다. 사람들이 그의 글을 좋아하자 그는 글쓰기 학교를 열기로 결심했습니다.`,
+    marketing: `이메일 목록, SEO, 링크드인 증가. 처음에는 매주 새로운 기사를 게시하고 모든 콘텐츠 하단에 뉴스레터 구독 신청을 요청했습니다. 오늘날 그의 두 가지 주요 고객 확보 채널은 SEO와 링크드인입니다.`,
+    employees: `0(SEO를 도와주는 프리랜서 1명 있음)`,
+    country: `France`,
+    year: `2020`,
+    tools: `Webflow`,
+    detail_url: `https://tuemarz.notion.site/1-a3db7cc8d18d4e99a34f0edd7fb84ba5?pvs=4`
+  },
+  {
+    founder: `Ania Wysocka`,
+    business: `Rootd`,
+    url: `rootd.io`,
+    desc: `공황 발작 관리를 위한 앱`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Rootd는 월간 요금제(월 $ 5.99), 연간 요금제(월 $ 59.99), 평생 요금제(월 $ 149)를 제공합니다.`,
+    revenue: 150000,
+    investment: `$1,000 - $5,000`,
+    trigger: `아니아는 개인적인 경험을 바탕으로 아이디어를 떠올렸습니다. 그녀는 평생 동안 많은 공황 발작과 불안을 경험했고, 이런 상황을 처리하는 데 도움이 되는 앱을 찾고 싶었지만 아무것도 찾을 수 없었습니다. 그래서 그녀는 직접 앱을 만들기로 결심했습니다.`,
+    marketing: `강력한 성장 동력은 앱 스토어 최적화 작업입니다. Ania는 앱 스토어에서 키워드, 스크린샷, 설명, 평점, 리뷰 및 다운로드를 최적화합니다. 또한 매월 주제/공휴일(예: 세계 정신 건강의 날, 세계 여성의 날)을 중심으로 스토리를 작성하여 큰 영향력을 발휘하고 있습니다.`,
+    employees: `0`,
+    country: `Canada`,
+    year: `2017`,
+    tools: `Creative Cloud`,
+    detail_url: `https://tuemarz.notion.site/200-b866f978fa8f4f2ca1c242c70f44e1af?pvs=4`
+  },
+  {
+    founder: `Catherine Weis`,
+    business: `Bestowe Gifting`,
+    url: `bestowegifting.com`,
+    desc: `기프트 서비스`,
+    industry: `E-commerce`,
+    product: `Marketplace`,
+    price: `60달러 미만부터 시작하는 선물`,
+    revenue: 144000,
+    investment: `$10,000 - $20,000`,
+    trigger: `한 행사에 참석하던 중 캐서린은 부업의 중요성을 깨닫기 시작했고, 그 깨달음은 그녀의 열정에 불을 지폈습니다. 그녀는 사업을 시작하기 위해 가족과 친구들에게 정신적, 정서적 지원을 요청했습니다.`,
+    marketing: `그녀는 숙련된 Instagram 참여 및 콘텐츠 제작 전문가에게 투자하고, 제품 라인의 고품질 사진에 대한 높은 수요를 충족하기 위해 재능 있는 사진작가도 고용했습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2017`,
+    tools: `ClickUp`,
+    detail_url: `https://tuemarz.notion.site/12K-23db580f9a644949b55902ebf8d80f84?pvs=4`
+  },
+  {
+    founder: `Jade Weatherington`,
+    business: `Teacher Jade`,
+    url: `teacherjade.com`,
+    desc: `온라인 튜터링`,
+    industry: `Education`,
+    product: `Online courses`,
+    price: `50부터 시작하는 레슨`,
+    revenue: 144000,
+    investment: `< $500`,
+    trigger: `제이드는 석사 과정을 밟던 중 부수입을 얻기 위해 교사로서 부업을 시작했습니다. 부업으로 시작한 일이 곧 그녀의 커리어가 되어 온라인 강좌 사업을 시작하게 되었습니다.`,
+    marketing: `만족스러운 과거 고객들의 입소문과 긍정적인 리뷰는 Jade의 주요 성장 채널입니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2020`,
+    tools: `Canva`,
+    detail_url: `https://tuemarz.notion.site/12-8ae724f94c8b448eb11cb6abc9459e24?pvs=4`
+  },
+  {
+    founder: `Rodolphe Dutel`,
+    business: `Remotive`,
+    url: `remotive.com`,
+    desc: `원격 채용 게시판`,
+    industry: `Media`,
+    product: `Directory`,
+    price: `구직자에게는 Remotive가 무료로 제공되며, 기업은 웹사이트(월 방문자 수 25만 명)와 뉴스레터(구독자 수 10만 명)에 채용 공고를 게시하는 데 398달러를 지불합니다.`,
+    revenue: 132000,
+    investment: `< $500`,
+    trigger: `로돌프는 Buffer에서 근무하면서 원격 근무 문화에 푹 빠졌습니다. 그는 이에 대해 블로그에 글을 쓰기 시작했고, 자연스럽게 구인 게시판으로 발전한 뉴스레터를 시작했습니다.`,
+    marketing: `수년에 걸쳐 여러 차례 Product Hunt를 출시하거나 인디 해커스와 같은 산발적인 미디어 홍보를 진행한 것 외에도 프로젝트의 주요 성장 동력은 지속적인 콘텐츠 게시였습니다. 사람들이 익명으로 자신의 연봉을 공유한 스프레드시트가 입소문을 탄 것이 좋은 예입니다.`,
+    employees: `0`,
+    country: `France`,
+    year: `2014`,
+    tools: `Medium`,
+    detail_url: `https://tuemarz.notion.site/Remotive-io-11-000-45dc0f593e6f4ca98143e41ca77c7f4d?pvs=4`
+  },
+  {
+    founder: `Laura Elizabeth`,
+    business: `Client Portal`,
+    url: `client-portal.io`,
+    desc: `워드프레스용 프로젝트 관리 도구.`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Laura는 단일 웹사이트 요금제를 249달러에, 다중 웹사이트 요금제를 449달러에 설정했습니다.`,
+    revenue: 132000,
+    investment: `$1,000 - $5,000`,
+    trigger: `프리랜서인 Laura는 고객에게 모든 프로젝트 자산을 한곳에 보관할 수 있는 곳을 알려주고 싶었기 때문에 처음에 이 도구를 직접 만들었습니다.`,
+    marketing: `Laura는 팟캐스트에 출연하여 많은 가치를 제공하고, 청취자들을 무료 이메일 강좌로 리디렉션하여 나중에 고객이 되게 합니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2016`,
+    tools: `HelpScout`,
+    detail_url: `https://tuemarz.notion.site/7-3fbd82d7a44541a798fc3b66956c4d73?pvs=4`
+  },
+  {
+    founder: `Steve Kidd`,
+    business: `Thriving Best Sellers, LLC`,
+    url: `thrivingbestsellers.com`,
+    desc: `사람들이 책을 쓰고, 출판하고, 마케팅할 수 있도록 지원하는 프로그램`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `Steve의 프로그램 베타 가격은 $15,000이며, 이 과정을 수강하는 선착순 20명에게 $997입니다.`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `1987년 인터넷 디지털 마케팅 회사를 운영하던 Steve는 당시 아내와 딸이 여행 이야기를 블로그에 올리면서 책을 출판하는 것을 도왔습니다. 이때 그는 베스트셀러가 되는 것이 얼마나 큰 힘을 발휘하는지 깨달았습니다. 스티브는 한 코치의 조언을 받아 자신의 첫 번째 프로그램을 만들었습니다.`,
+    marketing: `2019년까지는 Facebook과 LinkedIn 그룹이 Steve에게 가장 효과적이었습니다. 알고리즘이 변경됨에 따라 Steve는 이제 팟캐스터 및 라이브 연사와 상호 보완적인 파트너십으로 협력하고 있습니다. 또한 스티브는 비즈니스를 보다 효과적으로 마케팅하기 위해 커뮤니티 기반 앱을 개발하는 과정도 진행 중입니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `1987`,
+    tools: `Zoom`,
+    detail_url: `https://tuemarz.notion.site/12-8c2af7aac5794925acb1dd554257ca4b?pvs=4`
+  },
+  {
+    founder: `Zack Arnold`,
+    business: `Optimize Yourself`,
+    url: `optimizeyourself.me`,
+    desc: `온라인 개인 개발 코칭`,
+    industry: `Coaching`,
+    product: `Consulting`,
+    price: `주간 프로그램 $297부터 시작`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `잭의 코칭 비즈니스는 자기 계발에 대한 개인적인 열망에서 시작되었습니다. 그는 웰빙을 개선하기 위해 수년간 다양한 전략을 실험했고, 그의 성공적인 변화는 다른 사람들의 관심을 끌었습니다. 그의 방법에 대한 문의가 이어져 코칭 비즈니스를 설립하게 되었습니다.`,
+    marketing: `잭의 코칭 비즈니스는 자기 계발에 대한 개인적인 열망에서 시작되었습니다. 그는 웰빙을 개선하기 위해 수년간 다양한 전략을 실험했고, 그의 성공적인 변화는 다른 사람들의 관심을 끌었습니다. 그의 방법에 대한 문의가 이어져 코칭 비즈니스를 설립하게 되었습니다.`,
+    employees: `0`,
+    country: `USA`,
+    year: `2014`,
+    tools: `WordPress`,
+    detail_url: `https://tuemarz.notion.site/15-b3ee9b4390d54c38ba329bd49e29d92b?pvs=4`
+  },
+  {
+    founder: `Joe Masilotti`,
+    business: `RailsDevs`,
+    url: `railsdevs.com`,
+    desc: `개발자를 위한 채용 게시판`,
+    industry: `Community`,
+    product: `Marketplace`,
+    price: `Joe는 월 299달러에 고용인의 첫해 급여에서 10%의 수수료를 부과합니다.`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `조는 독립 계약자였고, 2021년경에 그와 함께 일할 의향이 있는 사람들이 몇 명 있었습니다. 업무에 쫓기다 보니 면접을 볼 여유가 없었고, 스프레드시트에 세부 정보를 기록하는 아이디어를 떠올렸습니다. 스프레드시트를 네트워크에 있는 기업들과 공유한 결과, 두 명에게서 채용 제안이 들어왔습니다! 그 순간 그는 비즈니스가 구축되기를 기다리고 있다는 것을 깨달았습니다.`,
+    marketing: `트위터에서 공개적으로 빌드를 작성하고 Github에서 개발자들을 참여시킴으로써 조는 피드백과 고객을 모두 확보할 수 있었습니다.  마켓플레이스로서 개발자가 많을수록 유료 고객도 많아집니다. Joe는 이 점에도 중점을 둡니다.`,
+    employees: `0(일부 계약자 포함)`,
+    country: `USA`,
+    year: `2021`,
+    tools: `Github`,
+    detail_url: `https://tuemarz.notion.site/146-2aa70e9c01d1499abae2486dc94b2e4c?pvs=4`
+  },
+  {
+    founder: `Pankaj Singh`,
+    business: `UrbanPLR`,
+    url: `urbanplr.com`,
+    desc: `PLR 멤버십 사이트`,
+    industry: `Community`,
+    product: `Marketplace`,
+    price: `제품 시작가 $9`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `판카즈는 최근 직장에서 해고되어 불로소득을 창출할 수 있는 방법을 모색하고 있었습니다. 그러던 중 미리 디자인된 디지털 제품을 재판매할 수 있는 웹 사이트인 PLR 제품을 발견했습니다. 그는 자신의 워드프레스 웹 디자인 전문 지식을 활용하여 자신의 비즈니스를 설립했습니다.`,
+    marketing: `설립자는 자신의 애플리케이션이 Google 첫 페이지에서 50개 이상의 상위 PLR 키워드에 순위를 매길 수 있도록 SEO 전략을 구현했습니다. 높은 트래픽은 비즈니스가 한 달에 2000달러 이상의 수익을 창출하는 데 도움이 됩니다.`,
+    employees: `0`,
+    country: `India`,
+    year: `2020`,
+    tools: `PayPal`,
+    detail_url: `https://tuemarz.notion.site/100-12-4ffafe2edeb74c26b87e9ea17c809ddd?pvs=4`
+  },
+  {
+    founder: `Viktor Hanacek`,
+    business: `picjumbo`,
+    url: `picjumbo.com`,
+    desc: `무료 스톡 사진 사이트`,
+    industry: `Media`,
+    product: `Niche blog`,
+    price: `월 $10부터 시작하는 프리미엄 멤버십 플랜`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `빅토르는 자신의 사진을 판매하여 온라인에서 소극적 수입을 창출하고 싶었습니다. 하지만 모든 유료 사이트에서 그의 사진이 저품질이라는 이유로 거절당했습니다. 이러한 거절은 그를 화나게 만들었지만 동시에 자신의 사업을 시작하고 싶다는 열망을 불러일으켰습니다.`,
+    marketing: `양질의 콘텐츠와 언론 보도는 고객을 확보하는 데 중요한 전략이었습니다. 빅토르는 뛰어난 품질의 사진을 찍어 자신의 웹사이트를 공유하는 유명 잡지의 관심을 끌었습니다.`,
+    employees: `0`,
+    country: `Czechia`,
+    year: `2013`,
+    tools: `Sendy`,
+    detail_url: `https://tuemarz.notion.site/1-12-da3ec09d3f414e8ca9a38ac454516858?pvs=4`
+  },
+  {
+    founder: `Yosef Adest`,
+    business: `52Frames`,
+    url: `52frames.com`,
+    desc: `온라인 사진 커뮤니티`,
+    industry: `Community`,
+    product: `Product`,
+    price: `10년이 넘는 기간 동안 이 개인 프로젝트는 요세프에게 수익원이 아니었으며, 무료로 운영되었습니다. 2021년에 그는 자신의 강좌, 앨범, 사진 필터를 이용할 수 있는 프리미엄 멤버십을 사이트에 도입했으며, 이 멤버십은 연간 130달러와 260달러의 두 가지 등급으로 나뉩니다.`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `요세프의 개인적인 사진 실력 향상을 위한 개인 프로젝트로 시작한 이 프로젝트는 다른 애호가들도 참여할 수 있도록 Facebook 페이지를 개설하고, 매주 사진 콘테스트에 사람들이 참여하는 등 10년 넘게 열정적인 프로젝트로 운영되었습니다. 2021년에 이르러서야 요세프는 프리미엄 사이트 멤버십을 출시하여 동영상 제작 프리랜서 경력을 그만둘 수 있을 만큼의 수익을 창출했습니다.`,
+    marketing: `커뮤니티가 무료로 시작되어 10년 넘게 유지된 이후, 페이스북 페이지 회원은 웹사이트로 옮겨갔고, 매주 새로운 콘테스트와 제출물을 통해 트래픽이 유기적으로 증가했습니다.  멤버십을 도입한 후, 요세프는 스타터 스토리 등 다른 플랫폼에서도 커뮤니티 사이트를 공유하여 더 많은 사용자를 확보하기 시작했습니다. 현재 18,000명이 넘는 팔로워를 보유한 그의 인스타그램은 자원봉사자 팀이 운영하고 있습니다.  커뮤니티가 탄탄한 반면, 요세프는 새로운 트래픽을 유기적인 입소문에 의존하고 있습니다. 그는 광고나 캠페인, SEO 마케팅을 하지 않습니다.`,
+    employees: `0(자원봉사자가 소셜 미디어 핸들을 관리하는 경우)`,
+    country: `Israel`,
+    year: `2011`,
+    tools: `Wufoo Forms`,
+    detail_url: `https://tuemarz.notion.site/1-5c4546f6b9784c77a3912d708fecdab1?pvs=4`
+  },
+  {
+    founder: `Ahmad Iqbal`,
+    business: `Nadeef Bidet`,
+    url: `getnadeef.com`,
+    desc: `휴대용 비데 회사`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `Ahmad는 이커머스 사이트에서 휴대용 비데, 비데 키트, 8달러에서 100달러 이상의 가격대의 일부 추가 기능을 판매하고 있습니다.`,
+    revenue: 120000,
+    investment: `N/A`,
+    trigger: `아마드의 아버지는 여러 나라를 여행해야 하는 직업을 가졌습니다. 다양한 문화를 접한 것이 아마드가 나데프 비데를 창업하게 된 계기가 되었습니다. 그는 중동과 일부 아시아 국가에서는 비데를 사용하는 것이 매우 일반적이라는 사실을 알게 되었습니다. 습관적으로 비데를 사용하면서 위생에 신경을 쓰던 아마드는 미국에서도 이 문제를 해결하기로 결심했습니다.`,
+    marketing: `성공하기 위해 모든 마케팅 채널을 시도하고 테스트해야 한다는 명확한 생각을 가진 Ahmad는 Kijiji와 eBay에 비데를 게시하고, 비데의 사용법과 장점에 관한 블로그를 작성하여 웹사이트에 SEO를 구현하고, Quora 게시물을 작성하고, 많은 노력을 기울였습니다. 가장 전환율이 높은 채널은 Facebook 광고로, 명확한 타겟 그룹을 확보하고 있기 때문입니다.`,
+    employees: `0`,
+    country: `Canada`,
+    year: `2015`,
+    tools: `Shopify`,
+    detail_url: `https://tuemarz.notion.site/10-000-3a75ac1a40944eb7aac22fc288846e4f?pvs=4`
+  },
+  {
+    founder: `Mike Lecky`,
+    business: `Vagabond Heart`,
+    url: `vagabondheart.co`,
+    desc: `빈티지에서 영감을 받은 여행용 패치 메이커`,
+    industry: `E-commerce`,
+    product: `Product`,
+    price: `제품당 $9부터 시작`,
+    revenue: 120000,
+    investment: `$1,000 - $5,000`,
+    trigger: `마이크의 아이디어는 빈티지 의류, 스타일, 오래된 영화에 대한 관심과 남성복과 패션, 여행에 대한 애정이 결합되어 탄생했습니다.`,
+    marketing: `설립자는 Fulfilled by Amazon 판매를 추가하여 광고 없이도 3개월 만에 아마존 주문 수가 월 0건에서 250건으로 늘어나는 것을 확인했습니다. 또 다른 큰 마케팅 효과는 메일링 리스트에서 나옵니다. 구독자 수가 2,000명이고 오픈율이 30%인 그는 스팸을 보내지 않으려고 노력하지만, 제품의 특성상 디자인이 마음에 들면 가본 적이 있는 곳이라면 더 많은 것을 원할 것입니다. 가장 좋은 반응은 1년에 5~6통의 이메일을 통해 \\"매장에 새로운 디자인이 들어왔어요! X나 Y에 가보셨나요?\\" 이러한 이메일은 오픈율 50% 이상, 클릭률 25% 이상을 달성하는 경향이 있습니다.`,
+    employees: `0`,
+    country: `Canada`,
+    year: `2017`,
+    tools: `Etsy`,
+    detail_url: `https://tuemarz.notion.site/Etsy-9fca714b6be0498b86b6d2fbe0f0c8bf?pvs=4`
+  },
+  {
+    founder: `Rick Blyth`,
+    business: `Merch Wizard & KDP Wizard`,
+    url: `kdpwizard.app`,
+    desc: `아마존 셀러를 위한 Chrome 확장 프로그램`,
+    industry: `Software`,
+    product: `SaaS`,
+    price: `Rick은 유료 크롬 확장 프로그램의 일회성 가격을 $12.99로 설정합니다.`,
+    revenue: 120000,
+    investment: `< $500`,
+    trigger: `Rick은 소극적 소득을 얻는다는 아이디어에 영감을 받아 이미 스트레스가 많은 직업을 가진 상태에서 FBA 판매에 뛰어 들기 시작했습니다. 그 후 그는 아마존 셀러의 삶을 개선할 수 있는 방법을 발견했습니다!`,
+    marketing: `컨퍼런스를 주최하고, 고객 만족에 집중하고, 커뮤니티에 참여함으로써 Rick은 리뷰와 추천을 모두 얻을 수 있습니다.`,
+    employees: `0`,
+    country: `UK`,
+    year: `2018`,
+    tools: `AWS`,
+    detail_url: `https://tuemarz.notion.site/120-Chrome-5f0d6413542f46fab00083ffb998c74a?pvs=4`
+  }
+];
 
-            const totalItems = filteredData.length;
-            document.getElementById('filter-count').textContent = `총 ${totalItems}개 사례`;
+// ─── State ───
+let filtered = [...caseData];
+let page = 1;
+const PER_PAGE = 10;
 
-            if (totalItems === 0) {
-                emptyState.classList.remove('hidden');
-                document.getElementById('page-start').textContent = '0';
-                document.getElementById('page-end').textContent = '0';
-                document.getElementById('page-total').textContent = '0';
-                document.getElementById('pagination-nav').innerHTML = '';
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
+const INDUSTRY_COLORS = {
+  "Software":   { bg:"#ede9fe", text:"#6d28d9", border:"#ddd6fe" },
+  "Media":      { bg:"#fef3c7", text:"#92400e", border:"#fde68a" },
+  "E-commerce": { bg:"#d1fae5", text:"#065f46", border:"#a7f3d0" },
+  "Education":  { bg:"#dbeafe", text:"#1e40af", border:"#bfdbfe" },
+  "Coaching":   { bg:"#fce7f3", text:"#9d174d", border:"#fbcfe8" },
+  "Community":  { bg:"#e0f2fe", text:"#075985", border:"#bae6fd" },
+  "Marketing":  { bg:"#f3e8ff", text:"#6b21a8", border:"#e9d5ff" }
+};
 
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+const CHART_COLORS = [
+  "rgba(99,102,241,.85)", "rgba(245,158,11,.85)", "rgba(20,184,166,.85)",
+  "rgba(59,130,246,.85)", "rgba(236,72,153,.85)", "rgba(14,165,233,.85)",
+  "rgba(139,92,246,.85)"
+];
 
-            document.getElementById('page-start').textContent = startIndex + 1;
-            document.getElementById('page-end').textContent = endIndex;
-            document.getElementById('page-total').textContent = totalItems;
+const insightData = {
+  1: {
+    tag: "마케팅 & 커뮤니티 전술",
+    title: "초기 오디언스 기반 빌딩 (Audience-First)",
+    body: `<p class="mb-3">스타듀 밸리의 에릭 바론이나 디자인조이의 브렛 윌리엄스 같은 글로벌 1인 창업가들의 공통된 성공 방정식 첫 번째는 <strong>'오디언스 우선(Audience First)'</strong> 전략입니다. 완성된 완제품을 들고 무작정 시장에 나가는 대신, 제품의 초기 기획 단계부터 개발 과정 전체를 트위터, 레딧, 뉴스레터에서 투명하게 공개하는 <strong>'빌드 인 퍼블릭(Build in Public)'</strong> 전술을 고수합니다.</p><p class="mb-3">제품이 발전해 나가는 생생한 스토리를 지켜보는 잠재 고객들은 단순한 구매자가 아닌 제품의 핵심 지지자이자 팬덤으로 성장합니다. 유기적으로 확보된 예비 충성 고객층은 정식 런칭 첫날 즉시 유료 결제자로 전환되므로, 막대한 광고 예산 없이도 강력한 초기 시장 안착을 달성할 수 있습니다.</p><p>수많은 팬덤과의 즉각적인 피드백 루프는 1인 개발의 물리적 한계를 넘어 완벽한 제품-시장 적합성(PMF)을 벼려내는 강력한 무기가 됩니다.</p>`
+  },
+  2: {
+    tag: "기술 인프라 혁신",
+    title: "노코드 및 경량 테크 스택 (No-Code Stack)",
+    body: `<p class="mb-3">글로벌 1인 창업 씬이 전례 없는 고수익과 급속한 확장을 구가할 수 있는 배경에는 <strong>노코드(No-code)와 로우코드(Low-code) 기술 혁명</strong>이 자리합니다. Webflow, Bubble, Carrd, Shopify, Stripe, Zapier 등의 결합 덕분입니다.</p><p class="mb-3">과거에는 수천만 원의 외주 비용과 수개월의 개발 기간이 소요되었을 서비스 아키텍처를, 이제는 1인 창업자 혼자서 단 몇 시간 내에 완벽하게 디자인하고 시장에 출시할 수 있습니다. 기술 장벽이 극적으로 낮아짐에 따라 창업가는 불필요한 디버깅이나 인프라 유지 보수에 에너지를 낭비하지 않게 되었습니다.</p><p>대신 비즈니스의 본질인 <strong>'고객 가치 제안'</strong>과 <strong>'타겟 고객 획득 마케팅'</strong>에 한정된 시간과 자원을 100% 집중할 수 있게 됩니다.</p>`
+  },
+  3: {
+    tag: "비즈니스 모델 다각화",
+    title: "구독형 및 제품화된 서비스 (Productized Service)",
+    body: `<p class="mb-3">1인 기업가가 직면하는 '개인 시간의 한계'를 극복하고 매출 스케일업을 실현하는 열쇠는 <strong>'무형 서비스의 제품화(Productized Service)'</strong> 및 <strong>'구독형 비즈니스 아키텍처'</strong>의 설계에 있습니다. 전통적인 프리랜서 용역 계약은 매 프로젝트마다 견적을 내고 자신이 노동한 시간에 비례해 정산받는 한계에서 벗어날 수 없었습니다.</p><p class="mb-3">반면 디자인조이와 같은 선구적 모델은 디자인 노동을 '월 4,995달러 무제한 디자인'이라는 명확하고 고정된 규격 상품으로 재정의했습니다. 클라이언트는 넷플릭스 구독하듯 즉각적으로 서비스를 소비합니다.</p><p>모든 서비스 프로세스를 매뉴얼화·템플릿화하여 운영 효율을 극대화하면서, 매달 안정적으로 누적되는 고정 매출(MRR)로 1인 비즈니스를 무한대로 확장할 수 있는 재무 구조가 탄생합니다.</p>`
+  }
+};
 
-            const paginatedItems = filteredData.slice(startIndex, endIndex);
+// ─── Init ───
+function initApp() {
+  if (typeof lucide !== "undefined") lucide.createIcons();
+  initKPIs();
+  initFilters();
+  initCharts();
+  applyFilters();
+  initMobileMenu();
+  initModals();
+}
 
-            paginatedItems.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
-                
-                let revString = `$${(item.revenue / 1000).toFixed(0)}k`;
-                if (item.revenue >= 1000000) {
-                    revString = `$${(item.revenue / 1000000).toFixed(2).replace(/\.00$/, '')}M`;
-                }
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
 
-                tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <div>
-                                <div class="text-sm font-bold text-slate-900">${item.business}</div>
-                                <div class="text-xs text-slate-400 font-medium">${item.founder} • <span class="hover:underline text-indigo-500 cursor-pointer text-[11px]">${item.url}</span></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                            ${item.industry}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                        <div class="flex flex-col">
-                            <span class="font-medium text-slate-700">${item.country}</span>
-                            <span class="text-[10px] text-slate-400">${item.year}년 설립</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-semibold text-right">
-                        ${revString}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <button onclick="openCaseModal('${item.founder}')" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs transition-colors">
-                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> 분석 보기
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
+function fmtRev(v) {
+  if (v >= 1e9) return "$" + (v/1e9).toFixed(1) + "B";
+  if (v >= 1e6) return "$" + (v/1e6).toFixed(1) + "M";
+  return "$" + (v/1000).toFixed(0) + "k";
+}
 
-            lucide.createIcons();
-            renderPaginationNav(totalPages);
-        }
+// ─── KPIs ───
+function initKPIs() {
+  const total = caseData.length;
+  document.getElementById("kpi-total").textContent = total + " 개";
 
-        // Render Pagination buttons dynamically
-        function renderPaginationNav(totalPages) {
-            const nav = document.getElementById('pagination-nav');
-            nav.innerHTML = '';
+  const maxItem = caseData.reduce((a,b) => a.revenue > b.revenue ? a : b);
+  document.getElementById("kpi-max-rev").textContent = fmtRev(maxItem.revenue);
+  document.getElementById("kpi-max-name").textContent = maxItem.business + " (" + maxItem.founder + ")";
 
-            if (totalPages <= 1) return;
+  const avg = caseData.reduce((s,d) => s + d.revenue, 0) / total;
+  document.getElementById("kpi-avg-rev").textContent = fmtRev(avg);
 
-            const prevBtn = document.createElement('button');
-            prevBtn.className = `relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium ${currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50'}`;
-            prevBtn.innerHTML = `<span class="sr-only">Previous</span><i data-lucide="chevron-left" class="w-4 h-4"></i>`;
-            if (currentPage > 1) {
-                prevBtn.addEventListener('click', () => {
-                    currentPage--;
-                    updateTableUI();
-                });
-            }
-            nav.appendChild(prevBtn);
+  const indMap = {};
+  caseData.forEach(d => { indMap[d.industry] = (indMap[d.industry]||0)+1; });
+  const topInd = Object.entries(indMap).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById("kpi-top-ind").textContent = topInd[0];
+  document.getElementById("kpi-top-ind-ratio").textContent = "전체 케이스의 약 " + Math.round(topInd[1]/total*100) + "% 점유";
+}
 
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `relative inline-flex items-center px-4 py-2 border text-sm font-medium ${i === currentPage ? 'z-10 bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-500 hover:bg-slate-50'}`;
-                    pageBtn.textContent = i;
-                    pageBtn.addEventListener('click', () => {
-                        currentPage = i;
-                        updateTableUI();
-                    });
-                    nav.appendChild(pageBtn);
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
-                    const dots = document.createElement('span');
-                    dots.className = "relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700";
-                    dots.textContent = "...";
-                    nav.appendChild(dots);
-                }
-            }
+// ─── Filters ───
+function initFilters() {
+  const inds = [...new Set(caseData.map(d=>d.industry))].sort();
+  const ctrs = [...new Set(caseData.map(d=>d.country))].sort();
+  const indSel = document.getElementById("filter-industry");
+  const ctrSel = document.getElementById("filter-country");
+  inds.forEach(v => { const o=document.createElement("option"); o.value=o.textContent=v; indSel.appendChild(o); });
+  ctrs.forEach(v => { const o=document.createElement("option"); o.value=o.textContent=v; ctrSel.appendChild(o); });
+  ["search-input","filter-industry","filter-country","sort-select"].forEach(id =>
+    document.getElementById(id).addEventListener("input", applyFilters)
+  );
+}
 
-            const nextBtn = document.createElement('button');
-            nextBtn.className = `relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium ${currentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:bg-slate-50'}`;
-            nextBtn.innerHTML = `<span class="sr-only">Next</span><i data-lucide="chevron-right" class="w-4 h-4"></i>`;
-            if (currentPage < totalPages) {
-                nextBtn.addEventListener('click', () => {
-                    currentPage++;
-                    updateTableUI();
-                });
-            }
-            nav.appendChild(nextBtn);
+function applyFilters() {
+  const q = document.getElementById("search-input").value.toLowerCase();
+  const ind = document.getElementById("filter-industry").value;
+  const ctr = document.getElementById("filter-country").value;
+  const srt = document.getElementById("sort-select").value;
 
-            document.getElementById('prev-page-mobile').disabled = currentPage === 1;
-            document.getElementById('next-page-mobile').disabled = currentPage === totalPages;
+  filtered = caseData.filter(d => {
+    if (q && !d.founder.toLowerCase().includes(q) && !d.business.toLowerCase().includes(q) &&
+        !d.desc.toLowerCase().includes(q) && !d.tools.toLowerCase().includes(q)) return false;
+    if (ind && d.industry !== ind) return false;
+    if (ctr && d.country !== ctr) return false;
+    return true;
+  });
 
-            lucide.createIcons();
-        }
+  if (srt === "high") filtered.sort((a,b)=>b.revenue-a.revenue);
+  else if (srt === "low") filtered.sort((a,b)=>a.revenue-b.revenue);
+  else if (srt === "recent") filtered.sort((a,b)=>parseInt(b.year)-parseInt(a.year));
 
-        // Mobile buttons event listeners
-        document.getElementById('prev-page-mobile').addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                updateTableUI();
-            }
-        });
-        document.getElementById('next-page-mobile').addEventListener('click', () => {
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updateTableUI();
-            }
-        });
+  page = 1;
+  renderTable();
+}
 
-        // 4. Case Modal Interactivity
-        function openCaseModal(founderName) {
-            const dataItem = rawCaseData.find(item => item.founder === founderName);
-            if (!dataItem) return;
+function renderTable() {
+  const tbody = document.getElementById("table-body");
+  const empty = document.getElementById("empty-state");
+  tbody.innerHTML = "";
 
-            document.getElementById('modal-creator').textContent = dataItem.founder;
-            document.getElementById('modal-business-name').textContent = dataItem.business;
-            document.getElementById('modal-description').textContent = dataItem.desc;
-            document.getElementById('modal-industry').textContent = dataItem.industry;
-            document.getElementById('modal-country').textContent = dataItem.country;
-            document.getElementById('modal-year').textContent = `${dataItem.year}년`;
-            
-            let revString = `$${(dataItem.revenue / 1000).toFixed(0)}k`;
-            if (dataItem.revenue >= 1000000) {
-                revString = `$${(dataItem.revenue / 1000000).toFixed(1)}M (약 ${(dataItem.revenue * 1300 / 100000000).toFixed(0)}억 원)`;
-            }
-            document.getElementById('modal-revenue').textContent = revString;
-            
-            document.getElementById('modal-investment').textContent = dataItem.investment;
-            document.getElementById('modal-price').textContent = dataItem.price;
-            document.getElementById('modal-trigger').innerHTML = dataItem.trigger;
-            document.getElementById('modal-marketing').innerHTML = dataItem.marketing;
-            
-            const toolsBox = document.getElementById('modal-tools');
-            if (dataItem.tools && dataItem.tools !== "N/A") {
-                document.getElementById('modal-tools-container').style.display = "block";
-                toolsBox.textContent = dataItem.tools;
-            } else {
-                document.getElementById('modal-tools-container').style.display = "none";
-            }
+  document.getElementById("filter-badge").textContent = "총 " + filtered.length + "개 사례";
+  document.getElementById("pg-total").textContent = filtered.length;
 
-            const webBtn = document.getElementById('modal-website-btn');
-            webBtn.href = dataItem.url.startsWith('http') ? dataItem.url : `https://${dataItem.url}`;
+  if (!filtered.length) {
+    empty.classList.remove("hidden");
+    document.getElementById("pg-start").textContent = "0";
+    document.getElementById("pg-end").textContent = "0";
+    document.getElementById("pagination-nav").innerHTML = "";
+    return;
+  }
+  empty.classList.add("hidden");
 
-            document.getElementById('details-modal').classList.remove('hidden');
-        }
+  const start = (page-1)*PER_PAGE;
+  const end = Math.min(start+PER_PAGE, filtered.length);
+  document.getElementById("pg-start").textContent = start+1;
+  document.getElementById("pg-end").textContent = end;
 
-        const closeModal = () => {
-            document.getElementById('details-modal').classList.add('hidden');
-        };
-        document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-        document.getElementById('modal-close-bg').addEventListener('click', closeModal);
-        document.getElementById('modal-close-footer-btn').addEventListener('click', closeModal);
+  filtered.slice(start, end).forEach((d, idx) => {
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-indigo-50/40 transition-colors group";
+    const col = INDUSTRY_COLORS[d.industry] || { bg:"#f1f5f9", text:"#475569", border:"#e2e8f0" };
+    const badge = `<span style="background:${col.bg};color:${col.text};border-color:${col.border}" class="badge-industry">${d.industry}</span>`;
+    tr.innerHTML = `
+      <td class="px-5 py-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">${d.business.charAt(0)}</div>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-slate-900 truncate max-w-[160px]">${d.business}</div>
+            <div class="text-xs text-slate-400">${d.founder} &bull; <span class="text-indigo-400">${d.url}</span></div>
+          </div>
+        </div>
+      </td>
+      <td class="px-5 py-4">${badge}</td>
+      <td class="px-5 py-4 hide-mobile">
+        <div class="text-sm font-medium text-slate-700">${d.country}</div>
+        <div class="text-[11px] text-slate-400">${d.year}년 설립</div>
+      </td>
+      <td class="px-5 py-4 text-right">
+        <span class="text-sm font-extrabold text-slate-900">${fmtRev(d.revenue)}</span>
+      </td>
+      <td class="px-5 py-4 text-center">
+        <button onclick="openCase(${start+idx})" class="btn-detail">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> 분석 보기
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 
-        // 5. Strategic Insight Report Modal Interactivity
-        function initInsightModal() {
-            const closeInsightModal = () => {
-                document.getElementById('insight-modal').classList.add('hidden');
-            };
-            document.getElementById('insight-modal-close-btn').addEventListener('click', closeInsightModal);
-            document.getElementById('insight-modal-close-bg').addEventListener('click', closeInsightModal);
-            document.getElementById('insight-modal-close-footer-btn').addEventListener('click', closeInsightModal);
-        }
+  if (typeof lucide !== "undefined") lucide.createIcons();
+  renderPagination();
+}
 
-        function openInsightModal(id) {
-            const report = insightReports[id];
-            if (!report) return;
+function renderPagination() {
+  const nav = document.getElementById("pagination-nav");
+  nav.innerHTML = "";
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  if (totalPages <= 1) return;
 
-            document.getElementById('insight-modal-tag').textContent = report.tag;
-            document.getElementById('insight-modal-title').textContent = report.title;
-            document.getElementById('insight-modal-body').innerHTML = report.content;
+  const btn = (label, onclick, active=false, disabled=false) => {
+    const b = document.createElement("button");
+    b.innerHTML = label;
+    b.className = `px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+      active ? "bg-indigo-600 text-white border-indigo-600" :
+      disabled ? "text-slate-300 border-slate-200 cursor-not-allowed" :
+      "text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-300"
+    }`;
+    if (!disabled) b.onclick = onclick;
+    return b;
+  };
 
-            document.getElementById('insight-modal').classList.remove('hidden');
-            lucide.createIcons(); // Ensure X icon is rendered correctly
-        }
+  nav.appendChild(btn("&#8592;", ()=>{ if(page>1){page--;renderTable();} }, false, page===1));
+  for (let i=1; i<=totalPages; i++) {
+    if (i===1||i===totalPages||Math.abs(i-page)<=1) {
+      nav.appendChild(btn(i, ()=>{ page=i; renderTable(); }, i===page));
+    } else if (Math.abs(i-page)===2) {
+      const s=document.createElement("span"); s.textContent="…"; s.className="px-2 text-xs text-slate-400"; nav.appendChild(s);
+    }
+  }
+  nav.appendChild(btn("&#8594;", ()=>{ if(page<totalPages){page++;renderTable();} }, false, page===totalPages));
+  if (typeof lucide !== "undefined") lucide.createIcons();
+}
 
-        // 6. Build Dynamic Chart.js visualizations
-        function renderCharts() {
-            const indStats = {};
-            const countryStats = {};
-            const revenueRanges = {
-                "Under $100k": 0,
-                "$100k - $500k": 0,
-                "$500k - $1M": 0,
-                "$1M - $10M": 0,
-                "Over $10M": 0
-            };
+// ─── Case Modal ───
+function openCase(idx) {
+  const d = filtered[idx];
+  if (!d) return;
+  const col = INDUSTRY_COLORS[d.industry] || { bg:"#f1f5f9", text:"#475569", border:"#e2e8f0" };
+  const indEl = document.getElementById("m-industry");
+  indEl.textContent = d.industry;
+  indEl.style.background = col.bg;
+  indEl.style.color = col.text;
+  indEl.style.borderColor = col.border;
 
-            rawCaseData.forEach(item => {
-                indStats[item.industry] = (indStats[item.industry] || 0) + 1;
-                countryStats[item.country] = (countryStats[item.country] || 0) + 1;
-                
-                if (item.revenue < 100000) {
-                    revenueRanges["Under $100k"]++;
-                } else if (item.revenue >= 100000 && item.revenue < 500000) {
-                    revenueRanges["$100k - $500k"]++;
-                } else if (item.revenue >= 500000 && item.revenue < 1000000) {
-                    revenueRanges["$500k - $1M"]++;
-                } else if (item.revenue >= 1000000 && item.revenue < 10000000) {
-                    revenueRanges["$1M - $10M"]++;
-                } else {
-                    revenueRanges["Over $10M"]++;
-                }
-            });
+  document.getElementById("m-business").textContent = d.business;
+  document.getElementById("m-desc").textContent = d.desc;
+  document.getElementById("m-country").textContent = d.country;
+  document.getElementById("m-year").textContent = d.year;
+  document.getElementById("m-founder").textContent = d.founder;
+  document.getElementById("m-revenue").textContent = fmtRev(d.revenue) + (d.revenue>=1e6 ? " (약 "+Math.round(d.revenue*1300/1e8)+"억원)" : "");
+  document.getElementById("m-investment").textContent = d.investment;
+  document.getElementById("m-employees").textContent = d.employees + "명";
+  document.getElementById("m-trigger").textContent = d.trigger;
+  document.getElementById("m-marketing").textContent = d.marketing;
 
-            const indCtx = document.getElementById('industryChart').getContext('2d');
-            new Chart(indCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(indStats),
-                    datasets: [{
-                        data: Object.values(indStats),
-                        backgroundColor: [
-                            'rgba(99, 102, 241, 0.8)',
-                            'rgba(20, 184, 166, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(139, 92, 246, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(236, 72, 153, 0.8)',
-                            'rgba(14, 165, 233, 0.8)'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                font: { size: 10 }
-                            }
-                        }
-                    }
-                }
-            });
+  const toolsWrap = document.getElementById("m-tools-wrap");
+  if (d.tools) { toolsWrap.style.display="block"; document.getElementById("m-tools").textContent = d.tools; }
+  else toolsWrap.style.display="none";
 
-            const revCtx = document.getElementById('revenueRangeChart').getContext('2d');
-            new Chart(revCtx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(revenueRanges),
-                    datasets: [{
-                        label: '케이스 스터디 건수',
-                        data: Object.values(revenueRanges),
-                        backgroundColor: 'rgba(20, 184, 166, 0.8)',
-                        borderRadius: 6,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
+  document.getElementById("m-price").textContent = d.price;
 
-            const sortedCountries = Object.entries(countryStats)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-                
-            const countryCtx = document.getElementById('countryChart').getContext('2d');
-            new Chart(countryCtx, {
-                type: 'bar',
-                data: {
-                    labels: sortedCountries.map(x => x[0]),
-                    datasets: [{
-                        label: '창업 사례 수',
-                        data: sortedCountries.map(x => x[1]),
-                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
-                        borderRadius: 6,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { precision: 0, font: { size: 10 } }
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
-        }
-    </script>
+  const link = document.getElementById("m-website-link");
+  const siteUrl = d.url ? (d.url.startsWith("http") ? d.url : "https://" + d.url) : "";
+  if (siteUrl) {
+    link.href = siteUrl;
+    link.removeAttribute("aria-disabled");
+    link.className = "inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors";
+  } else {
+    link.href = "#";
+    link.setAttribute("aria-disabled", "true");
+    link.onclick = e => e.preventDefault();
+    link.className = "inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 cursor-not-allowed pointer-events-none";
+  }
+
+  document.getElementById("modal-case").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  if (typeof lucide !== "undefined") lucide.createIcons();
+}
+
+// ─── Insight Modal ───
+function openInsight(id) {
+  const r = insightData[id];
+  if (!r) return;
+  document.getElementById("i-tag").textContent = r.tag;
+  document.getElementById("i-title").textContent = r.title;
+  document.getElementById("i-body").innerHTML = r.body;
+  document.getElementById("modal-insight").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  if (typeof lucide !== "undefined") lucide.createIcons();
+}
+
+function initModals() {
+  const closeCase = () => { document.getElementById("modal-case").classList.add("hidden"); document.body.style.overflow=""; };
+  document.getElementById("btn-close-case").addEventListener("click", closeCase);
+  document.getElementById("btn-close-case-footer").addEventListener("click", closeCase);
+  document.getElementById("modal-case-overlay").addEventListener("click", closeCase);
+
+  const closeInsight = () => { document.getElementById("modal-insight").classList.add("hidden"); document.body.style.overflow=""; };
+  document.getElementById("btn-close-insight").addEventListener("click", closeInsight);
+  document.getElementById("btn-close-insight-footer").addEventListener("click", closeInsight);
+  document.getElementById("modal-insight-overlay").addEventListener("click", closeInsight);
+
+  document.addEventListener("keydown", e => { if(e.key==="Escape"){ closeCase(); closeInsight(); } });
+}
+
+// ─── Mobile Menu ───
+function initMobileMenu() {
+  document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+    document.getElementById("mobile-menu").classList.toggle("hidden");
+  });
+  document.querySelectorAll("#mobile-menu a").forEach(a => {
+    a.addEventListener("click", () => document.getElementById("mobile-menu").classList.add("hidden"));
+  });
+}
+
+// ─── Charts ───
+function initCharts() {
+  if (typeof Chart === "undefined") return;
+
+  const indMap={}, ctrMap={};
+  const revBuckets={"~$100k":0,"$100k~500k":0,"$500k~$1M":0,"$1M~$10M":0,"$10M+":0};
+
+  caseData.forEach(d => {
+    indMap[d.industry] = (indMap[d.industry]||0)+1;
+    ctrMap[d.country] = (ctrMap[d.country]||0)+1;
+    if (d.revenue < 100000) revBuckets["~$100k"]++;
+    else if (d.revenue < 500000) revBuckets["$100k~500k"]++;
+    else if (d.revenue < 1000000) revBuckets["$500k~$1M"]++;
+    else if (d.revenue < 10000000) revBuckets["$1M~$10M"]++;
+    else revBuckets["$10M+"]++;
+  });
+
+  // Doughnut - Industry
+  new Chart(document.getElementById("chartIndustry").getContext("2d"), {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(indMap),
+      datasets: [{ data: Object.values(indMap), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: "#fff" }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:"bottom", labels: { boxWidth:12, font:{size:10}, padding:8 } } },
+      cutout: "60%"
+    }
+  });
+
+  // Bar - Revenue
+  new Chart(document.getElementById("chartRevenue").getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(revBuckets),
+      datasets: [{ label:"케이스 수", data: Object.values(revBuckets), backgroundColor:"rgba(20,184,166,.85)", borderRadius:6, borderWidth:0 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false} },
+      scales: {
+        y: { beginAtZero:true, grid:{color:"#f1f5f9"}, ticks:{font:{size:10}} },
+        x: { grid:{display:false}, ticks:{font:{size:10}} }
+      }
+    }
+  });
+
+  // Horizontal Bar - Country
+  const topCountries = Object.entries(ctrMap).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  new Chart(document.getElementById("chartCountry").getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: topCountries.map(x=>x[0]),
+      datasets: [{ label:"사례 수", data: topCountries.map(x=>x[1]), backgroundColor:"rgba(99,102,241,.85)", borderRadius:6, borderWidth:0 }]
+    },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false} },
+      scales: {
+        x: { beginAtZero:true, grid:{color:"#f1f5f9"}, ticks:{precision:0, font:{size:10}} },
+        y: { grid:{display:false}, ticks:{font:{size:10}} }
+      }
+    }
+  });
+}
+</script>
 </body>
 </html>
